@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STUDIO — Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --surface: #141313;
+    --surface-container-low: #1c1b1b;
+    --surface-container: #201f1f;
+    --surface-bright: #3a3939;
+    --on-surface: #e5e2e1;
+    --on-surface-variant: #c4c7c8;
+    --outline: #8e9192;
+    --outline-variant: #444748;
+    --primary: #ffffff;
+    --on-primary: #2f3131;
+    --secondary: #c7c6c6;
+    --background: #141313;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Sora', sans-serif;
+    background: var(--background);
+    color: var(--on-surface);
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  .cursor {
+    position: fixed; width: 8px; height: 8px;
+    background: var(--primary); border-radius: 50%;
+    pointer-events: none; z-index: 9999;
+    transform: translate(-50%, -50%);
+  }
+  .cursor-ring {
+    position: fixed; width: 32px; height: 32px;
+    border: 1px solid rgba(255,255,255,0.4); border-radius: 50%;
+    pointer-events: none; z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: width 0.2s, height 0.2s, opacity 0.2s;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 48px;
+    border-bottom: 1px solid rgba(142,145,146,0);
+    background: rgba(20,19,19,0);
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+    transition: background 0.4s ease, border-color 0.4s ease, backdrop-filter 0.4s ease;
+  }
+  nav.scrolled {
+    background: rgba(255,255,255,0.96);
+    border-bottom: 1px solid rgba(20,19,19,0.08);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  .nav-logo { font-size: 14px; font-weight: 800; letter-spacing: 0.06em; color: var(--primary); text-decoration: none; }
+  .nav-logo-img { filter: brightness(0) invert(1); transition: filter 0.4s ease; }
+  nav.scrolled .nav-logo-img { filter: brightness(0); }
+  .nav-links { display: flex; gap: 40px; list-style: none; margin-left: auto; }
+  .nav-links a {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--on-surface-variant); text-decoration: none; transition: color 0.4s ease; position: relative;
+  }
+  .nav-links a.active { color: var(--primary); }
+  .nav-links a.active::after {
+    content: ''; position: absolute; bottom: -4px; left: 0; right: 0;
+    height: 1px; background: var(--primary);
+  }
+  .nav-links a:hover { color: var(--primary); }
+  nav.scrolled .nav-logo { color: #141313; }
+  nav.scrolled .nav-links a { color: #6b6b6b; }
+  nav.scrolled .nav-links a.active,
+  nav.scrolled .nav-links a:hover { color: #141313; }
+  nav.scrolled .nav-links a.active::after { background: #141313; }
+  .nav-cta {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--primary); border: 1px solid var(--primary); padding: 10px 20px;
+    border-radius: 4px; text-decoration: none; transition: background 0.2s, color 0.2s;
+  }
+  .nav-cta:hover { background: var(--primary); color: var(--on-primary); }
+
+  /* PAGE HERO */
+  .page-hero {
+    padding-top: 65px;
+    min-height: 36vh;
+    display: flex;
+    align-items: flex-end;
+    padding-bottom: 56px;
+    padding-left: 48px;
+    padding-right: 48px;
+    border-bottom: 1px solid var(--outline-variant);
+    position: relative;
+    overflow: hidden;
+  }
+  .page-hero-bg {
+    position: absolute; inset: 0;
+    background-image: url('imagenes/general/hero.jpg');
+    background-size: cover; background-position: center 30%;
+    filter: brightness(0.3);
+  }
+  .page-hero-content { position: relative; z-index: 1; }
+  .page-hero-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--outline); margin-bottom: 16px; display: block;
+  }
+  .page-hero-title {
+    font-size: clamp(48px, 7vw, 96px); font-weight: 800;
+    letter-spacing: -0.03em; line-height: 1.0; color: var(--primary);
+  }
+
+  /* FOOTER CONTACT FORM */
+  .footer-connect {
+    text-align: left;
+    width: 100%;
+    max-width: 300px;
+  }
+  .modal-field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+  .modal-label { font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--outline); }
+  .modal-input, .modal-textarea {
+    background: var(--surface);
+    border: 1px solid var(--outline-variant);
+    border-radius: 2px; padding: 12px 16px;
+    color: var(--primary); font-family: 'Sora', sans-serif; font-size: 14px;
+    outline: none; transition: border-color 0.2s;
+  }
+  .modal-input:focus, .modal-textarea:focus { border-color: var(--outline); }
+  .modal-textarea { resize: vertical; min-height: 120px; }
+  .modal-submit {
+    width: 100%; padding: 14px;
+    background: var(--primary); color: var(--on-primary);
+    border: none; border-radius: 2px;
+    font-family: 'Sora', sans-serif; font-size: 11px; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    cursor: pointer; transition: opacity 0.2s; margin-top: 8px;
+  }
+  .modal-submit:hover { opacity: 0.85; }
+  .modal-success { text-align: center; color: var(--on-surface-variant); font-size: 14px; padding: 24px 0; display: none; }
+
+  /* GRID */
+  .portfolio-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    border-top: none;
+  }
+
+  .project-card {
+    position: relative; overflow: hidden;
+    border-right: 1px solid var(--outline-variant);
+    border-bottom: 1px solid var(--outline-variant);
+    text-decoration: none; display: block;
+    aspect-ratio: 5/3;
+    background: var(--surface-container);
+  }
+  .project-card:nth-child(even) { border-right: none; }
+
+  /* Cards al 80% de altura */
+  .project-card { aspect-ratio: 5/3; }
+
+  .project-card-bg {
+    position: absolute; inset: 0;
+    background-size: cover; background-position: center;
+    opacity: 0.4;
+    transition: transform 0.6s ease, opacity 0.4s ease;
+  }
+  .project-card:hover .project-card-bg {
+    transform: scale(1.04);
+    opacity: 0.9;
+  }
+
+  .project-card-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(20,19,19,0.8) 0%, transparent 55%);
+  }
+
+  .project-card-content {
+    position: relative; z-index: 2;
+    height: 100%; padding: 28px 32px;
+    display: flex; flex-direction: column; justify-content: flex-end;
+  }
+
+  .project-card-category {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--outline); margin-bottom: 6px;
+  }
+  .project-card-title {
+    font-size: clamp(18px, 2.2vw, 26px); font-weight: 700;
+    letter-spacing: -0.01em; color: var(--primary); line-height: 1.2;
+  }
+  .project-card-meta {
+    display: flex; gap: 16px; margin-top: 10px;
+    font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--on-surface-variant);
+  }
+
+  .project-card-arrow {
+    position: absolute; top: 28px; right: 32px; z-index: 2;
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; color: var(--primary);
+    opacity: 0; transform: translateY(4px);
+    transition: opacity 0.3s, transform 0.3s;
+  }
+  .project-card:hover .project-card-arrow { opacity: 1; transform: translateY(0); }
+
+  /* SERVICES row tags en card hover */
+  .project-card-services {
+    display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px;
+    opacity: 0; transform: translateY(8px);
+    transition: opacity 0.3s 0.05s, transform 0.3s 0.05s;
+  }
+  .project-card:hover .project-card-services { opacity: 1; transform: translateY(0); }
+  .service-tag {
+    font-size: 9px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--on-surface-variant);
+    border: 1px solid rgba(255,255,255,0.15);
+    padding: 3px 8px; border-radius: 9999px;
+  }
+
+  /* CTA SECTION */
+  .cta-section {
+    padding: 120px 48px;
+    text-align: center;
+    display: flex; flex-direction: column; align-items: center; gap: 32px;
+    border-top: 1px solid var(--outline-variant);
+  }
+  .cta-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--outline);
+  }
+  .cta-title {
+    font-size: clamp(20px, 3vw, 32px); font-weight: 700;
+    letter-spacing: -0.01em; color: var(--on-surface);
+  }
+  .cta-btn {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--on-primary); background: var(--primary);
+    padding: 14px 36px; border-radius: 4px; text-decoration: none;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .cta-btn:hover { opacity: 0.85; transform: translateY(-2px); }
+
+  /* FOOTER */
+  footer {
+    background: var(--surface-container-low); padding: 64px 48px 40px;
+    border-top: 1px solid var(--outline-variant);
+  }
+  .footer-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 48px; }
+  .footer-brand { display: flex; flex-direction: column; gap: 12px; }
+  .footer-logo { font-size: 20px; font-weight: 800; letter-spacing: 0.06em; color: var(--primary); }
+  .footer-tagline { font-size: 13px; line-height: 1.6; color: var(--on-surface-variant); max-width: 320px; }
+  .footer-connect { display: flex; flex-direction: column; gap: 10px; text-align: right; }
+  .footer-connect-label { font-size: 14px; font-weight: 700; color: var(--on-surface); margin-bottom: 4px; }
+  .footer-social-link {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--outline); text-decoration: none; transition: color 0.2s;
+  }
+  .footer-social-link:hover { color: var(--primary); }
+  .footer-bottom {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-top: 32px; border-top: 1px solid var(--outline-variant);
+  }
+  .footer-copy { font-size: 11px; letter-spacing: 0.06em; color: var(--outline); text-transform: uppercase; }
+  .footer-legal { display: flex; gap: 24px; }
+  .footer-legal a {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--outline); text-decoration: none; transition: color 0.2s;
+  }
+  .footer-legal a:hover { color: var(--primary); }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
+
+<nav>
+  <a href="index.html" class="nav-logo"><img src="imagenes/general/lymstudio-logo.svg" alt="LYM Studio" class="nav-logo-img" style="height:22px; width:auto; display:block;"></a>
+  <ul class="nav-links">
+    <li><a href="index.html">El Estudio</a></li>
+    <li><a href="servicios.html">Qué Hacemos</a></li>
+    <li><a href="portfolio.html" class="active">Portfolio</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="page-hero-bg"></div>
+  <div class="page-hero-content">
+    <span class="page-hero-label">Trabajos seleccionados</span>
+    <h1 class="page-hero-title">Clientes.</h1>
+  </div>
+</div>
+
+<!-- GRID -->
+<div class="portfolio-grid" id="portfolio-grid">
+
+  <a href="proyecto.html?id=trelles" class="project-card" data-tags="branding,arquitectura,visualizaciones">
+    <div class="project-card-bg" style="background-image: url('imagenes/thumbnails/trelles.jpg');"></div>
+    <div class="project-card-overlay"></div>
+    <div class="project-card-arrow">↗</div>
+    <div class="project-card-content">
+      <span class="project-card-category">Real Estate · Buenos Aires</span>
+      <h2 class="project-card-title">Trelles</h2>
+      <div class="project-card-meta">
+        <span>2025</span>
+      </div>
+      <div class="project-card-services">
+        <span class="service-tag">Branding</span>
+        <span class="service-tag">Arquitectura</span>
+        <span class="service-tag">Visualizaciones</span>
+      </div>
+    </div>
+  </a>
+
+  <a href="proyecto.html?id=canaveral" class="project-card" data-tags="branding,visualizaciones">
+    <div class="project-card-bg" style="background-image: url('imagenes/thumbnails/cañaveral.png');"></div>
+    <div class="project-card-overlay"></div>
+    <div class="project-card-arrow">↗</div>
+    <div class="project-card-content">
+      <span class="project-card-category">Residencial · Buenos Aires</span>
+      <h2 class="project-card-title">Cañaveral I</h2>
+      <div class="project-card-meta">
+        <span>2025</span>
+      </div>
+      <div class="project-card-services">
+        <span class="service-tag">Branding</span>
+        <span class="service-tag">Visualizaciones</span>
+      </div>
+    </div>
+  </a>
+
+  <a href="proyecto.html?id=nordelta" class="project-card" data-tags="arquitectura,visualizaciones">
+    <div class="project-card-bg" style="background-image: url('imagenes/thumbnails/atlikum.jpg');"></div>
+    <div class="project-card-overlay"></div>
+    <div class="project-card-arrow">↗</div>
+    <div class="project-card-content">
+      <span class="project-card-category">Oficinas · CABA</span>
+      <h2 class="project-card-title">Atlikum</h2>
+      <div class="project-card-meta">
+        <span>2023</span>
+      </div>
+      <div class="project-card-services">
+        <span class="service-tag">Arquitectura</span>
+        <span class="service-tag">Visualizaciones</span>
+      </div>
+    </div>
+  </a>
+
+  <a href="proyecto.html?id=caballito" class="project-card" data-tags="branding,arquitectura,visualizaciones">
+    <div class="project-card-bg" style="background-image: url('imagenes/thumbnails/olofpalme.jpg');"></div>
+    <div class="project-card-overlay"></div>
+    <div class="project-card-arrow">↗</div>
+    <div class="project-card-content">
+      <span class="project-card-category">Comercial · Buenos Aires</span>
+      <h2 class="project-card-title">Olof Palme</h2>
+      <div class="project-card-meta">
+        <span>2025</span>
+      </div>
+      <div class="project-card-services">
+        <span class="service-tag">Branding</span>
+        <span class="service-tag">Arquitectura</span>
+        <span class="service-tag">Visualizaciones</span>
+      </div>
+    </div>
+  </a>
+
+  <a href="proyecto.html?id=elcazal" class="project-card" data-tags="branding,visualizaciones">
+    <div class="project-card-bg" style="background-image: url('imagenes/thumbnails/cazal.jpg');"></div>
+    <div class="project-card-overlay"></div>
+    <div class="project-card-arrow">↗</div>
+    <div class="project-card-content">
+      <span class="project-card-category">Residencial · Buenos Aires</span>
+      <h2 class="project-card-title">El Cazal</h2>
+      <div class="project-card-meta">
+        <span>2024</span>
+      </div>
+      <div class="project-card-services">
+        <span class="service-tag">Branding</span>
+        <span class="service-tag">Visualizaciones</span>
+      </div>
+    </div>
+  </a>
+
+  <a href="proyecto.html?id=honda" class="project-card" data-tags="branding,diseño">
+    <div class="project-card-bg" style="background-image: url('imagenes/thumbnails/honda.png');"></div>
+    <div class="project-card-overlay"></div>
+    <div class="project-card-arrow">↗</div>
+    <div class="project-card-content">
+      <span class="project-card-category">Comercial · Buenos Aires</span>
+      <h2 class="project-card-title">Honda</h2>
+      <div class="project-card-meta">
+        <span>2024</span>
+      </div>
+      <div class="project-card-services">
+        <span class="service-tag">Branding</span>
+        <span class="service-tag">Diseño</span>
+      </div>
+    </div>
+  </a>
+
+</div>
+
+<!-- CTA -->
+<div class="cta-section">
+  <span class="cta-label">¿Tenés un proyecto?</span>
+  <p class="cta-title">Empezá tu viaje arquitectónico.</p>
+  <a href="#contact-form" class="cta-btn">Ponerse en contacto</a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="footer-logo"><img src="imagenes/general/iso-logo.svg" alt="LYM Studio" style="height:128px; width:auto; filter:brightness(0) invert(1); display:block;"></div>
+      <p class="footer-tagline">Suscritos a la excelencia técnica. Desarrollamos infraestructuras que perduran a través de la precisión matemática y el rigor estético.</p>
+      <div style="display:flex; gap:20px; margin-top:4px;">
+        <a href="https://www.instagram.com/lymstudio.ar/" target="_blank" class="footer-social-link">Instagram</a>
+        <a href="https://www.behance.net/lymstudio" target="_blank" class="footer-social-link">Behance</a>
+      </div>
+    </div>
+    <div class="footer-connect">
+      <p class="footer-connect-label">Ponerse en contacto</p>
+      <form id="contact-form" onsubmit="submitContactForm(event)">
+        <div class="modal-field">
+          <label class="modal-label" for="c-nombre">Nombre</label>
+          <input class="modal-input" id="c-nombre" type="text" placeholder="Tu nombre" required>
+        </div>
+        <div class="modal-field">
+          <label class="modal-label" for="c-mail">Mail</label>
+          <input class="modal-input" id="c-mail" type="email" placeholder="tu@mail.com" required>
+        </div>
+        <div class="modal-field">
+          <label class="modal-label" for="c-mensaje">Mensaje</label>
+          <textarea class="modal-textarea" id="c-mensaje" placeholder="Contanos sobre tu proyecto..." required></textarea>
+        </div>
+        <button class="modal-submit" type="submit">Enviar mensaje</button>
+      </form>
+      <div class="modal-success" id="contact-success">
+        <p style="color:var(--on-surface-variant); font-size:14px; padding:12px 0;">¡Gracias! Tu mensaje fue enviado correctamente.</p>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2025 LYM Studio. All Rights Reserved. — Web diseñada y desarrollada por LYM Studio.</span>
+  </div>
+</footer>
+
+<script>
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove', e => {
+    mx=e.clientX; my=e.clientY;
+    cursor.style.left=mx+'px'; cursor.style.top=my+'px';
+  });
+  (function animateRing() {
+    rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12;
+    ring.style.left=rx+'px'; ring.style.top=ry+'px';
+    requestAnimationFrame(animateRing);
+  })();
+  document.querySelectorAll('a,button').forEach(el => {
+    el.addEventListener('mouseenter', ()=>{ ring.style.width='48px'; ring.style.height='48px'; ring.style.opacity='0.5'; });
+    el.addEventListener('mouseleave', ()=>{ ring.style.width='32px'; ring.style.height='32px'; ring.style.opacity='1'; });
+  });
+
+  const nav = document.querySelector('nav');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > window.innerHeight * 0.7) nav.classList.add('scrolled');
+    else nav.classList.remove('scrolled');
+  });
+
+  function submitContactForm(e) {
+    e.preventDefault();
+    const nombre = document.getElementById('c-nombre').value;
+    const mail = document.getElementById('c-mail').value;
+    const mensaje = document.getElementById('c-mensaje').value;
+    const subject = encodeURIComponent('Contacto desde LYM Studio — ' + nombre);
+    const body = encodeURIComponent('Nombre: ' + nombre + '\nMail: ' + mail + '\n\nMensaje:\n' + mensaje);
+    window.open('mailto:info@lym-studio.com?subject=' + subject + '&body=' + body);
+    document.getElementById('contact-form').style.display = 'none';
+    document.getElementById('contact-success').style.display = 'block';
+    setTimeout(() => {
+      document.getElementById('contact-form').style.display = 'block';
+      document.getElementById('contact-success').style.display = 'none';
+      document.getElementById('contact-form').reset();
+    }, 2500);
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STUDIO — Proyecto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --surface: #141313;
+    --surface-container-low: #1c1b1b;
+    --surface-container: #201f1f;
+    --on-surface: #e5e2e1;
+    --on-surface-variant: #c4c7c8;
+    --outline: #8e9192;
+    --outline-variant: #444748;
+    --primary: #ffffff;
+    --on-primary: #2f3131;
+    --background: #141313;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Sora', sans-serif;
+    background: var(--background);
+    color: var(--on-surface);
+    overflow-x: hidden;
+    cursor: none;
+  }
+  .cursor { position: fixed; width: 8px; height: 8px; background: var(--primary); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); }
+  .cursor-ring { position: fixed; width: 32px; height: 32px; border: 1px solid rgba(255,255,255,0.4); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%, -50%); transition: width 0.2s, height 0.2s, opacity 0.2s; }
+
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 20px 48px; border-bottom: 1px solid rgba(142,145,146,0); background: rgba(20,19,19,0); backdrop-filter: blur(0px); -webkit-backdrop-filter: blur(0px); transition: background 0.4s ease, border-color 0.4s ease, backdrop-filter 0.4s ease; }
+  nav.scrolled { background: rgba(255,255,255,0.96); border-bottom: 1px solid rgba(20,19,19,0.08); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+  .nav-logo { font-size: 14px; font-weight: 800; letter-spacing: 0.06em; color: var(--primary); text-decoration: none; }
+  .nav-logo-img { filter: brightness(0) invert(1); transition: filter 0.4s ease; }
+  nav.scrolled .nav-logo-img { filter: brightness(0); }
+  .nav-links { display: flex; gap: 40px; list-style: none; margin-left: auto; }
+  .nav-links a { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--on-surface-variant); text-decoration: none; transition: color 0.4s ease; position: relative; }
+  .nav-links a.active { color: var(--primary); }
+  .nav-links a.active::after { content: ''; position: absolute; bottom: -4px; left: 0; right: 0; height: 1px; background: var(--primary); }
+  .nav-links a:hover { color: var(--primary); }
+  nav.scrolled .nav-logo { color: #141313; }
+  nav.scrolled .nav-links a { color: #6b6b6b; }
+  nav.scrolled .nav-links a.active, nav.scrolled .nav-links a:hover { color: #141313; }
+  nav.scrolled .nav-links a.active::after { background: #141313; }
+  .nav-cta { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--primary); border: 1px solid var(--primary); padding: 10px 20px; border-radius: 4px; text-decoration: none; transition: background 0.2s, color 0.2s; }
+  .nav-cta:hover { background: var(--primary); color: var(--on-primary); }
+
+  /* HERO */
+  .project-hero { padding-top: 65px; height: 70vh; position: relative; overflow: hidden; }
+  .project-hero-bg { position: absolute; inset: 0; background-size: cover; background-position: center; filter: brightness(0.5); transform: scale(1.04); transition: transform 0.8s ease; }
+  .project-hero.loaded .project-hero-bg { transform: scale(1); }
+  .project-hero-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(20,19,19,0.92) 0%, rgba(20,19,19,0.1) 60%, transparent 100%); }
+  .project-hero-content { position: absolute; bottom: 56px; left: 48px; right: 48px; z-index: 2; display: flex; align-items: flex-end; justify-content: space-between; }
+  .project-hero-left { display: flex; flex-direction: column; gap: 10px; }
+  .project-back { display: inline-flex; align-items: center; gap: 8px; font-size: 10px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--outline); text-decoration: none; transition: color 0.2s; margin-bottom: 6px; }
+  .project-back:hover { color: var(--primary); }
+  .project-hero-category { font-size: 10px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--outline); }
+  .project-hero-title { font-size: clamp(40px, 6vw, 80px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.0; color: var(--primary); }
+  .project-hero-right { display: flex; flex-direction: column; gap: 20px; text-align: right; }
+  .hero-meta-group { display: flex; flex-direction: column; gap: 4px; }
+  .hero-meta-label { font-size: 10px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--outline); }
+  .hero-meta-value { font-size: 14px; font-weight: 700; letter-spacing: 0.02em; color: var(--on-surface); }
+
+  /* 3-COLUMN */
+  .services-layout { display: grid; grid-template-columns: 200px 1fr 42%; min-height: 100vh; border-bottom: 1px solid var(--outline-variant); }
+
+  .sidebar { border-right: 1px solid var(--outline-variant); padding: 48px 32px; position: sticky; top: 65px; height: calc(100vh - 65px); display: flex; flex-direction: column; gap: 4px; overflow-y: auto; }
+  .sidebar-label { font-size: 10px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--outline); margin-bottom: 24px; }
+  .sidebar-item { font-size: 14px; font-weight: 600; color: var(--on-surface-variant); padding: 10px 0; cursor: pointer; transition: color 0.2s, padding-left 0.2s; border: none; background: none; text-align: left; font-family: 'Sora', sans-serif; position: relative; }
+  .sidebar-item::before { content: ''; position: absolute; left: -32px; top: 50%; transform: translateY(-50%); width: 0; height: 1px; background: var(--primary); transition: width 0.3s ease; }
+  .sidebar-item.active { color: var(--primary); padding-left: 12px; }
+  .sidebar-item.active::before { width: 20px; }
+  .sidebar-item:hover { color: var(--on-surface); }
+
+  /* Concepto badge en sidebar */
+  .sidebar-item.concepto-item { color: var(--outline); font-size: 12px; }
+  .sidebar-item.concepto-item.active { color: var(--primary); }
+
+  .content-col { padding: 64px 56px; border-right: 1px solid var(--outline-variant); display: flex; flex-direction: column; justify-content: space-between; min-height: calc(100vh - 65px); }
+  .content-inner { display: flex; flex-direction: column; gap: 28px; }
+  .content-service-num { font-size: 10px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--outline); }
+  .content-title { font-size: clamp(24px, 3vw, 40px); font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; color: var(--primary); max-width: 480px; }
+  .content-divider { width: 48px; height: 1px; background: var(--outline-variant); }
+  .content-description { font-size: 15px; font-weight: 400; line-height: 1.75; color: var(--on-surface-variant); max-width: 480px; }
+
+  /* Concepto: texto más amplio, sin deliverables */
+  .concepto-body { font-size: 16px; font-weight: 400; line-height: 1.9; color: var(--on-surface-variant); max-width: 480px; }
+  .concepto-body p + p { margin-top: 20px; }
+
+  .deliverables-section { display: flex; flex-direction: column; gap: 14px; }
+  .deliverables-label { font-size: 10px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--outline); }
+  .deliverables-list { display: flex; flex-wrap: wrap; gap: 8px; }
+  .deliverable-pill { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--on-surface-variant); border: 1px solid var(--outline-variant); padding: 7px 14px; border-radius: 9999px; transition: border-color 0.2s, color 0.2s; }
+  .deliverable-pill:hover { border-color: var(--outline); color: var(--on-surface); }
+
+  .content-nav { display: flex; align-items: center; justify-content: space-between; padding-top: 40px; border-top: 1px solid var(--outline-variant); margin-top: 32px; }
+  .content-nav-prev, .content-nav-next { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--outline); background: none; border: none; cursor: pointer; font-family: 'Sora', sans-serif; transition: color 0.2s; display: flex; align-items: center; gap: 8px; }
+  .content-nav-prev:hover, .content-nav-next:hover { color: var(--primary); }
+  .content-nav-prev:disabled, .content-nav-next:disabled { opacity: 0.2; cursor: default; }
+  .content-nav-indicator { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; color: var(--outline); }
+
+  .image-col { position: sticky; top: 65px; height: calc(100vh - 65px); overflow: hidden; }
+  .image-wrapper { position: relative; width: 100%; height: 100%; }
+  .service-image { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0; transition: opacity 0.6s ease, transform 0.6s ease; transform: scale(1.04); }
+  .service-image.active { opacity: 1; transform: scale(1); }
+  .image-overlay { position: absolute; inset: 0; background: linear-gradient(to right, rgba(20,19,19,0.25) 0%, transparent 40%); z-index: 1; }
+
+  /* GALLERY */
+  .project-gallery { padding: 80px 48px; border-bottom: 1px solid var(--outline-variant); }
+  .gallery-label { font-size: 10px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--outline); margin-bottom: 40px; display: block; }
+  .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+  .gallery-img { aspect-ratio: 4/3; background-size: cover; background-position: center; transition: transform 0.4s ease; cursor: zoom-in; overflow: hidden; }
+  .gallery-img:hover { transform: scale(1.02); }
+  .gallery-img.tall { grid-row: span 2; aspect-ratio: unset; }
+
+  /* NEXT PROJECT */
+  .next-project { display: block; text-decoration: none; position: relative; overflow: hidden; height: 40vh; }
+  .next-project-bg { position: absolute; inset: 0; background-size: cover; background-position: center; filter: brightness(0.4); transition: transform 0.6s ease, filter 0.4s ease; }
+  .next-project:hover .next-project-bg { transform: scale(1.03); filter: brightness(0.3); }
+  .next-project-overlay { position: absolute; inset: 0; background: rgba(20,19,19,0.35); }
+  .next-project-content { position: relative; z-index: 2; height: 100%; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 16px; text-align: center; }
+  .next-label { font-size: 10px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--outline); }
+  .next-title { font-size: clamp(28px, 4vw, 56px); font-weight: 800; letter-spacing: -0.02em; color: var(--primary); }
+  .next-arrow { width: 48px; height: 48px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--primary); transition: background 0.3s; }
+  .next-project:hover .next-arrow { background: var(--primary); color: var(--on-primary); }
+
+  footer { background: var(--surface-container-low); padding: 64px 48px 40px; border-top: 1px solid var(--outline-variant); }
+  .footer-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 48px; }
+  .footer-brand { display: flex; flex-direction: column; gap: 12px; }
+  .footer-logo { font-size: 20px; font-weight: 800; letter-spacing: 0.06em; color: var(--primary); }
+  .footer-tagline { font-size: 13px; line-height: 1.6; color: var(--on-surface-variant); max-width: 320px; }
+  .footer-connect { display: flex; flex-direction: column; gap: 10px; text-align: right; }
+  .footer-connect-label { font-size: 14px; font-weight: 700; color: var(--on-surface); margin-bottom: 4px; }
+  .footer-social-link { font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--outline); text-decoration: none; transition: color 0.2s; }
+  .footer-social-link:hover { color: var(--primary); }
+  .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 32px; border-top: 1px solid var(--outline-variant); }
+  .footer-copy { font-size: 11px; letter-spacing: 0.06em; color: var(--outline); text-transform: uppercase; }
+  .footer-legal { display: flex; gap: 24px; }
+  .footer-legal a { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--outline); text-decoration: none; transition: color 0.2s; }
+  .footer-legal a:hover { color: var(--primary); }
+
+  .content-block { transition: opacity 0.32s ease, transform 0.32s ease; }
+  .content-block.transitioning { opacity: 0; transform: translateY(10px); }
+
+  /* FOOTER CONTACT FORM */
+  .footer-connect {
+    text-align: left;
+    width: 100%;
+    max-width: 300px;
+  }
+  .modal-field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+  .modal-label { font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--outline); }
+  .modal-input, .modal-textarea {
+    background: var(--surface); border: 1px solid var(--outline-variant);
+    border-radius: 2px; padding: 12px 16px;
+    color: var(--primary); font-family: 'Sora', sans-serif; font-size: 14px;
+    outline: none; transition: border-color 0.2s;
+  }
+  .modal-input:focus, .modal-textarea:focus { border-color: var(--outline); }
+  .modal-textarea { resize: vertical; min-height: 120px; }
+  .modal-submit {
+    width: 100%; padding: 14px;
+    background: var(--primary); color: var(--on-primary);
+    border: none; border-radius: 2px;
+    font-family: 'Sora', sans-serif; font-size: 11px; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    cursor: pointer; transition: opacity 0.2s; margin-top: 8px;
+  }
+  .modal-submit:hover { opacity: 0.85; }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
+
+<nav>
+  <a href="index.html" class="nav-logo"><img src="imagenes/general/lymstudio-logo.svg" alt="LYM Studio" class="nav-logo-img" style="height:22px; width:auto; display:block;"></a>
+  <ul class="nav-links">
+    <li><a href="index.html">El Estudio</a></li>
+    <li><a href="servicios.html">Qué Hacemos</a></li>
+    <li><a href="portfolio.html" class="active">Portfolio</a></li>
+  </ul>
+</nav>
+
+<div class="project-hero" id="project-hero">
+  <div class="project-hero-bg" id="hero-bg"></div>
+  <div class="project-hero-overlay"></div>
+  <div class="project-hero-content">
+    <div class="project-hero-left">
+      <a href="portfolio.html" class="project-back">← Volver al Portfolio</a>
+      <span class="project-hero-category" id="hero-category"></span>
+      <h1 class="project-hero-title" id="hero-title"></h1>
+    </div>
+    <div class="project-hero-right">
+      <div class="hero-meta-group"><span class="hero-meta-label">Año</span><span class="hero-meta-value" id="hero-year"></span></div>
+      <div class="hero-meta-group"><span class="hero-meta-label">Cliente</span><span class="hero-meta-value" id="hero-client"></span></div>
+    </div>
+  </div>
+</div>
+
+<div class="services-layout">
+  <aside class="sidebar" id="sidebar">
+    <p class="sidebar-label">Proyecto</p>
+  </aside>
+  <div class="content-col">
+    <div class="content-block" id="content-block">
+      <div class="content-inner">
+        <span class="content-service-num" id="content-num"></span>
+        <h2 class="content-title" id="content-title"></h2>
+        <div class="content-divider"></div>
+        <div class="concepto-body" id="concepto-body"></div>
+        <p class="content-description" id="content-description"></p>
+        <div class="deliverables-section" id="deliverables-section">
+          <p class="deliverables-label">Deliverables</p>
+          <div class="deliverables-list" id="deliverables-list"></div>
+        </div>
+      </div>
+      <div class="content-nav">
+        <button class="content-nav-prev" id="btn-prev">← Anterior</button>
+        <span class="content-nav-indicator" id="nav-indicator"></span>
+        <button class="content-nav-next" id="btn-next">Siguiente →</button>
+      </div>
+    </div>
+  </div>
+  <div class="image-col">
+    <div class="image-wrapper" id="image-wrapper">
+      <div class="image-overlay"></div>
+    </div>
+  </div>
+</div>
+
+<div class="project-gallery">
+  <span class="gallery-label">Galería del Proyecto</span>
+  <div class="gallery-grid" id="gallery-grid"></div>
+</div>
+
+<a href="#" class="next-project" id="next-project">
+  <div class="next-project-bg" id="next-bg"></div>
+  <div class="next-project-overlay"></div>
+  <div class="next-project-content">
+    <span class="next-label">Siguiente Proyecto</span>
+    <h2 class="next-title" id="next-title"></h2>
+    <div class="next-arrow">↗</div>
+  </div>
+</a>
+
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="footer-logo"><img src="imagenes/general/iso-logo.svg" alt="LYM Studio" style="height:128px; width:auto; filter:brightness(0) invert(1); display:block;"></div>
+      <p class="footer-tagline">Suscritos a la excelencia técnica. Desarrollamos infraestructuras que perduran a través de la precisión matemática y el rigor estético.</p>
+      <div style="display:flex; gap:20px; margin-top:4px;">
+        <a href="https://www.instagram.com/lymstudio.ar/" target="_blank" class="footer-social-link">Instagram</a>
+        <a href="https://www.behance.net/lymstudio" target="_blank" class="footer-social-link">Behance</a>
+      </div>
+    </div>
+    <div class="footer-connect">
+      <p class="footer-connect-label">Ponerse en contacto</p>
+      <form id="contact-form" onsubmit="submitContactForm(event)">
+        <div class="modal-field">
+          <label class="modal-label" for="c-nombre">Nombre</label>
+          <input class="modal-input" id="c-nombre" type="text" placeholder="Tu nombre" required>
+        </div>
+        <div class="modal-field">
+          <label class="modal-label" for="c-mail">Mail</label>
+          <input class="modal-input" id="c-mail" type="email" placeholder="tu@mail.com" required>
+        </div>
+        <div class="modal-field">
+          <label class="modal-label" for="c-mensaje">Mensaje</label>
+          <textarea class="modal-textarea" id="c-mensaje" placeholder="Contanos sobre tu proyecto..." required></textarea>
+        </div>
+        <button class="modal-submit" type="submit">Enviar mensaje</button>
+      </form>
+      <div class="modal-success" id="contact-success" style="display:none;">
+        <p style="color:var(--on-surface-variant); font-size:14px; padding:12px 0;">¡Gracias! Tu mensaje fue enviado correctamente.</p>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2025 LYM Studio. All Rights Reserved. — Web diseñada y desarrollada por LYM Studio.</span>
+  </div>
+</footer>
+
+<script>
+/* ── BASE DE DATOS DE PROYECTOS ──────────────────────────
+   Para agregar un proyecto nuevo: copiá un bloque,
+   cambiá el id y completá los datos.
+   tabs: siempre arranca con type:'concepto', luego
+   los servicios que correspondan a ese proyecto.
+─────────────────────────────────────────────────────── */
+const PROJECTS = {
+
+  trelles: {
+    title: 'Trelles',
+    category: 'Real Estate · Buenos Aires',
+    year: '2024', client: 'Grupo Trelles',
+    heroImage: 'imagenes/proyecto/trelles/hero.jpg',
+    next: { id: 'canaveral', title: 'Cañaveral I', image: 'imagenes/proyecto/trelles/next.jpg' },
+    gallery: [
+      'imagenes/proyecto/trelles/gallery-01.jpg',
+      'imagenes/proyecto/trelles/gallery-02.jpg',
+      'imagenes/proyecto/trelles/gallery-03.jpg',
+      'imagenes/proyecto/trelles/gallery-04.jpg',
+      'imagenes/proyecto/trelles/gallery-05.jpg',
+    ],
+    tabs: [
+      {
+        type: 'concepto', label: 'Concepto',
+        num: '00 — Concepto',
+        title: 'Solidez que también es cálidad.',
+        body: ['Trelles parte de una tension: la rigidez del hormigon y la liviandad de lo que lo habita. Sobre esa base trabajamos la materialidad y la atmosfera: el hormigon visto que da caracter, la madera que lo entibia, la vegetacion que cae sobre los balcones y una paleta natural que se cuela hacia adentro de los interiores.'],
+        image: 'imagenes/proyecto/trelles/concepto.jpg'
+      },
+      {
+        type: 'servicio', label: 'Visualizaciones',
+        num: '01 — Visualizaciones',
+        title: 'Ver el proyecto antes de que exista.',
+        description: 'Renders fotorrealistas que permiten al comprador experimentar Trelles antes de su construcción.',
+        deliverables: ['Renders exteriores', 'Renders interiores', 'Tours virtuales 360°', 'Modelos 3D', 'Animación de recorrido'],
+        image: 'imagenes/proyecto/trelles/renders.jpg'
+         },
+      {
+        type: 'servicio', label: 'Branding',
+        num: '02 — Branding',
+        title: 'Una identidad tan sólida como la estructura que representa.',
+        description: 'Desarrollamos la identidad visual completa del proyecto Trelles: desde el naming hasta el sistema de marca. El resultado es una marca que transmite solidez, exclusividad y pertenencia al contexto porteño.',
+        deliverables: ['Identidad visual', 'Manual de marca', 'Naming', 'Estrategia de marca', 'Papelería corporativa'],
+        image: 'imagenes/proyecto/trelles/branding.jpg'
+      },
+      {
+        type: 'servicio', label: 'Brochure',
+        num: '03 — Brochure',
+        title: 'Cada página comunica la esencia del lugar.',
+        description: 'Diseñamos el brochure comercial de Trelles como una pieza editorial de alta gama. Cada spread fue pensado para guiar al comprador a través de una experiencia visual antes de que el edificio exista.',
+        deliverables: ['Brochure impreso A4', 'Versión digital interactiva', 'Monofolha resumen', 'Kit de ventas'],
+        image: 'imagenes/proyecto/trelles/brochure.jpg'
+      },
+      {
+        type: 'servicio', label: 'Documentación',
+        num: '04 — Documentación',
+        title: 'El plano como pieza de comunicación.',
+        description: 'Trabajamos sobre la documentacion del proyecto para que cada plano sea claro y presentable. Pulimos y unificamos el lenguaje grafico hasta que la informacion se lee de un vistazo y entra con coherencia en el brochure. Un plano bien resuelto no solo guia la obra: tambien vende el proyecto.',
+        deliverables: ['Plantas comerciales', 'Cortes Ilustrativos', 'Esquemas visuales', 'Superficies de venta'],
+        image: 'imagenes/proyecto/trelles/arquitectura.jpg'
+      },
+    ]
+  },
+
+  canaveral: {
+    title: 'Cañaveral I',
+    category: 'Residencial · Buenos Aires',
+    year: '2024', client: 'Eco Visión S.A.',
+    heroImage: 'imagenes/proyecto/canaveral/hero.jpg',
+    next: { id: 'nordelta', title: 'Atlikum', image: 'imagenes/proyecto/canaveral/hero.jpg' },
+    gallery: [
+      'imagenes/proyecto/canaveral/gallery-01.jpg',
+      'imagenes/proyecto/canaveral/gallery-02.jpg',
+      'imagenes/proyecto/canaveral/gallery-03.jpg',
+      'imagenes/proyecto/canaveral/gallery-04.jpg',
+      'imagenes/proyecto/canaveral/gallery-05.jpg',
+    ],
+    tabs: [
+      {
+        type: 'concepto', label: 'Concepto',
+        num: '00 — Concepto',
+        title: 'Sustentabilidad que se siente en cada espacio.',
+        body: ['El proyecto se concibe como una arquitectura contemporánea, eficiente y comprometida con su entorno, donde la tecnología aplicada a la sustentabilidad y al ahorro energético se convierte en una herramienta de mejorar la calidad de vida de quienes lo habitan. Propone un estilo de vida donde la arquitectura se integra con espacios verdes comunes. Cuenta con un SUM con parrillas, gimnasio y piscina con vista a la montaña, complementados con una plaza verde de descanso y meditacion.'],
+        image: 'imagenes/proyecto/canaveral/fachada.jpg'
+      },
+      {
+        type: 'servicio', label: 'Visualizaciones',
+        num: '02 — Visualizaciones',
+        title: 'Moderno, cálido y en diálogo con el entorno.',
+        description: 'Las visualizaciones de Cañaveral I buscan transmitir cómo se siente habitarlo: la luz natural que entra a lo largo del día, la calidez de la madera y los tonos neutros, y la relación constante entre el interior y el verde del exterior. Cada imagen captura ese diálogo con el entorno, las vistas y la vegetación; y lo convierte en lo que define la experiencia del proyecto.',
+        deliverables: ['Renders exteriores', 'Renders interiores', 'Renders de amenities', 'Tour virtual 360°'],
+        image: 'imagenes/proyecto/canaveral/visualizacion.jpg'
+      },
+      {
+        type: 'servicio', label: 'Brochure',
+        num: '01 — Brochure',
+        title: 'Un documento que es, en sí mismo, una experiencia.',
+        description: 'Para Cañaveral I diseñamos un brochure que refleja la personalidad del proyecto: urbano, tecnología, sustentabilidad y conexión. Cada elemento gráfico refuerza la propuesta de valor del proyecto.',
+        deliverables: ['Brochure impreso', 'Versión digital PDF', 'Kit de presentación para inversores'],
+        image: 'imagenes/proyecto/canaveral/brochure-2.jpeg'
+      },
+        {
+        type: 'servicio', label: 'Identidad Visual',
+        num: '02 — Identidad Visual',
+        title: 'Un documento que es, en sí mismo, una experiencia.',
+        description: 'Para Cañaveral I diseñamos un brochure que refleja la personalidad del proyecto: urbano, tecnología, sustentabilidad y conexión. Cada elemento gráfico refuerza la propuesta de valor del proyecto.',
+        deliverables: ['Brochure impreso', 'Versión digital PDF', 'Kit de presentación para inversores'],
+        image: 'imagenes/proyecto/canaveral/identidad.jpg'
+      },
+    ]
+  },
+
+  nordelta: {
+    title: 'Atlikum',
+    category: 'Oficinas · Torre',
+    year: '2023', client: 'Nieto Metaxas - Desarollos Urbanos',
+    heroImage: 'imagenes/proyecto/atlikum2/atl-hero.jpg',
+    next: { id: 'caballito', title: 'Olof Palme', image: 'imagenes/proyecto/hilich/hero.jpg' },
+    gallery: [
+      'imagenes/proyecto/atlikum2/gallery-01.jpg',
+      'imagenes/proyecto/atlikum2/gallery-02.jpg',
+      'imagenes/proyecto/atlikum2/gallery-03.jpg',
+      'imagenes/proyecto/atlikum2/gallery-04.jpg',
+      'imagenes/proyecto/atlikum2/gallery-05.jpg',
+    ],
+    tabs: [
+      {
+        type: 'concepto', label: 'Concepto',
+        num: '00 — Concepto',
+        title: 'Vivir en equilibrio.',
+        body: ['Una torre que celebra la esquina y que viene a cambiar la fisonomía del barrio, brindando arquitectura de vanguardia con un delicado balance entre escala, cantidad de unidades, variedad de tipologías y amenities para que la vivencia de cada habitante sea de pleno bienestar. Su diseño y el uso de materiales nobles aseguran la atemporalidad de la torre y un bajo costo de mantenimiento'],
+        image: 'imagenes/proyecto/atlikum2/concepto.jpg'
+      },
+      {
+        type: 'servicio', label: 'Visualizaciones',
+        num: '01 — Visualizaciones',
+        title: 'Mucho más que un espacio para vivir.',
+        description: 'Las visualizaciones recorren las unidades y los espacios comunes en distintos momentos del día, y muestran cómo la luz natural redefine cada ambiente: la calidez del atardecer entrando por los ventanales, el hormigón y la madera que dan textura, la vista abierta al río como parte del living. Más que mostrar espacios, buscan transmitir la experiencia de habitarlos.',
+        deliverables: ['Renders exteriores día/noche', 'Renders interiores', 'Renders de paisajismo', 'Animación exterior'],
+        image: 'imagenes/proyecto/atlikum2/gallery-03.jpg'
+      },
+      {
+        type: 'servicio', label: 'Brochure',
+        num: '02 — Brochure',
+        title: 'Cada página comunica la esencia del lugar.',
+        description: 'Diseñamos el brochure comercial de Atlikum como una pieza editorial de alta gama. Cada spread fue pensado para guiar al comprador a través de una experiencia visual antes de que el edificio exista.',
+        deliverables: ['Brochure impreso A4', 'Versión digital interactiva', 'Monofolha resumen', 'Kit de ventas'],
+        image: 'imagenes/proyecto/atlikum2/brochure.jpg'
+      },
+      {
+        type: 'servicio', label: 'Documentación',
+        num: '03 — Documentación',
+        title: 'Planos que hablan el idioma del proyecto.',
+        description: 'Tomamos los planos del proyecto y los trabajamos para que acompañen la comunicación: ordenamos la información y unificamos el lenguaje gráfico con la estética del brochure, sin perder la precisión que un plano necesita. El resultado es una documentación que se lee de un vistazo y entra con coherencia en el resto de las piezas. Un plano claro no solo informa: también suma a la forma en que se presenta el proyecto.',
+        deliverables: ['Planos de planta y cortes', 'Memoria descriptiva', 'Detalles constructivos', 'Documentación de obra', 'Supervisión técnica'],
+        image: 'imagenes/proyecto/atlikum2/visualizacion.jpg'
+      },
+      
+      
+    ]
+  },
+
+  caballito: {
+    title: 'Olof Palme',
+    category: 'Comercial · Buenos Aires',
+    year: '2025', client: 'Hilich S.A.',
+    heroImage: 'imagenes/proyecto/hilich/hero.jpg',
+    next: { id: 'elcazal', title: 'El Cazal', image: 'imagenes/proyecto/elcazal/thumb.jpg' },
+    gallery: [
+      'imagenes/proyecto/hilich/gallery-01.jpg',
+      'imagenes/proyecto/hilich/gallery-02.jpg',
+      'imagenes/proyecto/hilich/gallery-03.jpg',
+      'imagenes/proyecto/hilich/gallery-04.jpg',
+      'imagenes/proyecto/hilich/gallery-05.jpg',
+    ],
+    tabs: [
+      {
+        type: 'concepto', label: 'Concepto',
+        num: '00 — Concepto',
+        title: 'Vivir con la tranquilidad de una casa.',
+        body: ['En el barrio de Saavedra, surge un proyecto que combina calidez residencial y diseño contemporáneo. Ubicado en una zona en crecimiento, ofrece unidades funcionales y luminosas, pensadas para quienes valoran la tranquilidad sin alejarse del ritmo de la ciudad. Los espacios al aire libre de uso privado en cada unidad invitan a disfrutar del exterior con la privacidad de una casa, en un entorno urbano en constante crecimiento.'],
+        image: 'imagenes/proyecto/hilich/gallery-01.jpg'
+      },
+        {
+        type: 'servicio', label: 'Documentación',
+        num: '01 — Documentación',
+        title: 'La marca, también en los planos.',
+        description: 'Trabajamos sobre la documentación para que cada plano hable el mismo idioma que la marca. Aplicamos el branding de Hilich —su paleta natural, de tierras y verdes— a un lenguaje gráfico que mantiene la precisión que un plano necesita, pero suma calidez e identidad. El resultado entra con coherencia en el brochure: información clara que también comunica de dónde viene el proyecto.',
+        deliverables: ['Proyecto ejecutivo completo', 'Memoria de cálculo', 'Planos de detalle', 'Pliego licitatorio', 'Dirección de obra'],
+        image: 'imagenes/proyecto/hilich/arq.jpg'
+      },
+        {
+          type: 'servicio', label: 'Visualizaciones',
+          num: '02 — Visualizaciones',
+          title: 'Donde el adentro y el afuera se mezclan.',
+          description: 'Las visualizaciones de Olof Palme buscan transmitir cómo se vive el proyecto puertas afuera: la luz cálida de la tarde sobre los espacios exteriores, la pérgola y el verde que entran a cada unidad, el límite difuso entre el living y la terraza. Más que mostrar ambientes, capturan la experiencia de tener el aire libre de una casa dentro del edificio.',
+          deliverables: ['Renders exteriores', 'Renders interiores', 'Animación de recorrido', 'Tour virtual 360°'],
+          image: 'imagenes/proyecto/hilich/visualizacion.jpg'
+        },
+      {
+        type: 'servicio', label: 'Branding',
+        num: '03 — Branding',
+        title: 'Una marca que habla de la ciudad.',
+        description: 'El isotipo de Hilich, con su textura orgánica y bordes irregulares, transmite una identidad cercana, auténtica y vinculada a la tierra. La paleta de colores cálidos refuerza esta conexión, creando una marca que se siente parte del barrio y de sus habitantes.',
+        deliverables: ['Identidad visual', 'Sistema de señalética', 'Aplicaciones digitales', 'Manual de marca'],
+        image: 'imagenes/proyecto/hilich/brand-1.jpg'
+      },
+        {
+        type: 'servicio', label: 'Brochure',
+        num: '04 — Brochure',
+        title: 'Cada página comunica la esencia del lugar.',
+        description: 'Diseñamos el brochure comercial de Hilich .',
+        deliverables: ['Brochure impreso A4', 'Versión digital interactiva', 'Monofolha resumen', 'Kit de ventas'],
+        image: 'imagenes/proyecto/hilich/tablet.jpg'
+      },
+  
+      
+      
+    ]
+  },
+
+  elcazal: {
+    title: 'El Cazal',
+    category: 'Residencial · Buenos Aires',
+    year: '2024', client: 'El Cazal',
+    heroImage: 'imagenes/proyecto/elcazal/hero.jpg',
+    next: { id: 'honda', title: 'Honda', image: 'imagenes/proyecto/honda/hero.jpg' },
+    gallery: [
+      'imagenes/proyecto/elcazal/gallery-01.jpg',
+      'imagenes/proyecto/elcazal/gallery-02.jpg',
+      'imagenes/proyecto/elcazal/gallery-03.jpg',
+      'imagenes/proyecto/elcazal/gallery-04.jpg',
+      'imagenes/proyecto/elcazal/gallery-05.jpg',
+    ],
+    tabs: [
+      {
+        type: 'concepto', label: 'Concepto',
+        num: '00 — Concepto',
+        title: 'Diseñar en diálogo con el lugar.',
+        body: ['El proyecto parte de una pregunta: ¿cómo sumar un volumen nuevo sin alterar la identidad de un lugar que ya tiene la suya? Diseñamos un bloque anexo al club-house existente, pensado como un espacio flexible —gimnasio, yoga, SUM— capaz de transformarse según la actividad. Lo implantamos de manera que ambos bloques dialoguen: entre ellos se genera un semicubierto que los conecta y los deja funcionar de forma independiente. Y lo orientamos hacia el lago, para que el nuevo volumen no solo se integre, sino que aporte algo propio: una vista, un mirador, una excusa para detenerse.'],
+        image: 'imagenes/proyecto/elcazal/thumb.jpg'
+      },
+      {
+        type: 'servicio', label: 'Arquitectura',
+        num: '01 — Arquitectura',
+        title: 'Del concepto al plano.',
+        description: 'Acá no solo imaginamos el espacio: lo diseñamos y lo documentamos de principio a fin. Resolvimos la planta para que el bloque funcione con flexibilidad, que un mismo ambiente sea gimnasio, sala de yoga o SUM según el momento; y trabajamos el semicubierto como articulación entre lo nuevo y lo existente. Cada decisión de diseño se tradujo en documentación precisa: plantas, cortes y vistas que ordenan la obra y, a la vez, comunican con claridad la idea detrás del proyecto.',
+        deliverables: ['Anteproyecto', 'Proyecto ejecutivo', 'Planos de planta, cortes y vistas', 'Detalles constructivos', 'Documentación de obra'],
+        image: 'imagenes/proyecto/elcazal/arquitectura.jpg'
+      },
+      {
+        type: 'servicio', label: 'Visualizaciones',
+        num: '02 — Visualizaciones',
+        title: 'El paisaje como parte del proyecto.',
+        description: 'Las visualizaciones buscan transmitir lo que define al proyecto: su relación con el paisaje. Mostramos cómo el semicubierto enlaza los dos bloques y enmarca el verde, cómo el deck se eleva como mirador hacia el lago, y cómo los grandes paños vidriados disuelven el límite entre el interior y el parque. La luz atraviesa cada imagen y le da el clima cálido que vuelve al espacio un lugar donde uno quiere quedarse.',
+        deliverables: ['Renders exteriores', 'Renders interiores', 'Renders de paisajismo', 'Animación de recorrido'],
+        image: 'imagenes/proyecto/elcazal/visualizacion.jpg'
+      },
+      {
+        type: 'servicio', label: 'Brochure',
+        num: '03 — Brochure',
+        title: 'El proyecto, listo para mostrar.',
+        description: 'El brochure reúne todo el proyecto en una sola pieza: el concepto, los planos, los renders y la idea que los conecta. Lo armamos para que cuente una historia clara —de dónde parte el anexo, cómo se integra al club-house, qué propone hacia el lago— y para que esa historia entre de un vistazo, con la misma estética que atraviesa todo el desarrollo. Una presentación pensada para que el proyecto se entienda y se quiera, antes incluso de pisar el lugar.',
+        deliverables: ['Presentación del proyecto', 'Láminas de concepto', 'Mockups de materialidad'],
+        image: 'imagenes/proyecto/elcazal/brochure.jpg'
+      }
+    ]
+  },
+
+  honda: {
+    title: 'Honda',
+    category: 'Comercial · Buenos Aires',
+    year: '2024', client: 'Honda',
+    heroImage: 'imagenes/proyecto/honda/hero.jpg',
+    next: { id: 'trelles', title: 'Trelles', image: 'imagenes/proyecto/trelles/hero.jpg' },
+    gallery: [
+      'imagenes/proyecto/honda/gallery-01.jpg',
+      'imagenes/proyecto/honda/gallery-02.jpg',
+      'imagenes/proyecto/honda/gallery-03.jpg',
+      'imagenes/proyecto/honda/gallery-04.jpg',
+      'imagenes/proyecto/honda/gallery-05.jpg'
+    ],
+    tabs: [
+      {
+        type: 'concepto', label: 'Concepto',
+        num: '00 — Concepto',
+        title: 'Llevar una identidad de marca al espacio.',
+        body: ['Honda llegó con una identidad ya definida: colores, lenguaje visual, una marca con reglas claras. El desafío no fue inventar desde cero, sino lo contrario: traducir ese branding al espacio físico del local y lograr que funcione: que sea fiel a la marca y, a la vez, un lugar agradable de habitar y de mostrar. Trabajamos dentro de esos límites para que cada ítem del espacio (materiales, color, distribución) hablara el idioma de Honda sin perder calidad espacial. '],
+        image: 'imagenes/proyecto/honda/gallery-05.jpg'
+      },
+      {
+        type: 'servicio', label: 'Arquitectura',
+        num: '01 — Arquitectura',
+        title: 'De los lineamientos a la planta resuelta.',
+        description: 'Partimos de unos lineamientos iniciales y terminamos de resolver la planta del local: definimos cómo se organiza el espacio y dónde va cada función. Sectorizamos las áreas según su uso (ventas, taller, zona de entrega) buscando que el recorrido sea claro para el cliente y eficiente para la operación. Una distribución pensada para que cada zona funcione bien por separado y el local se entienda como un todo. ',
+        deliverables: ['Anteproyecto', 'Proyecto ejecutivo', 'Planos técnicos completos', 'Detalles constructivos', 'Documentación de obra'],
+        image: 'imagenes/proyecto/honda/thumb.jpg'
+      },
+      {
+        type: 'servicio', label: 'Visualizaciones',
+        num: '02 — Visualizaciones',
+        title: 'El punto donde la identidad de marca se empieza a habitar.',
+        description: 'Las visualizaciones muestran el local como una experiencia, no solo como un punto de venta. El rojo y el lenguaje de Honda ordenan cada ambiente, el showroom, la official store, el coffee corner, la terraza. Todo esto, convive con motos de exhibición, materiales cálidos y una luz que invita a quedarse. Cada imagen busca transmitir cómo se siente recorrer el espacio: una marca fuerte, traducida en un lugar donde dan ganas de estar.',
+        deliverables: ['Renders exteriores', 'Renders interiores', 'Renders de paisajismo', 'Animación de recorrido'],
+        image: 'imagenes/proyecto/honda/visualizacion.jpg'
+      },
+    ]
+  }
+
+};
+
+/* ── INIT ─────────────────────────────────── */
+const params = new URLSearchParams(window.location.search);
+const projectId = params.get('id') || 'trelles';
+const project = PROJECTS[projectId] || PROJECTS['trelles'];
+let current = 0;
+
+// Hero
+document.getElementById('hero-bg').style.backgroundImage = `url('${project.heroImage}')`;
+document.getElementById('hero-category').textContent = project.category;
+document.getElementById('hero-title').textContent = project.title;
+document.getElementById('hero-year').textContent = project.year;
+document.getElementById('hero-client').textContent = project.client;
+document.title = `STUDIO — ${project.title}`;
+
+// Next project
+document.getElementById('next-project').href = `proyecto.html?id=${project.next.id}`;
+document.getElementById('next-title').textContent = project.next.title;
+document.getElementById('next-bg').style.backgroundImage = `url('${project.next.image}')`;
+
+// Gallery
+const galleryGrid = document.getElementById('gallery-grid');
+project.gallery.forEach((url, i) => {
+  const div = document.createElement('div');
+  div.className = 'gallery-img' + (i === 0 ? ' tall' : '');
+  div.style.backgroundImage = `url('${url}')`;
+  galleryGrid.appendChild(div);
+});
+
+// Sidebar tabs
+const sidebar = document.getElementById('sidebar');
+project.tabs.forEach((tab, i) => {
+  const btn = document.createElement('button');
+  btn.className = 'sidebar-item' + (i === 0 ? ' active' : '') + (tab.type === 'concepto' ? ' concepto-item' : '');
+  btn.dataset.index = i;
+  btn.textContent = tab.label;
+  btn.addEventListener('click', () => setTab(i));
+  sidebar.appendChild(btn);
+});
+
+// Images
+const imageWrapper = document.getElementById('image-wrapper');
+const overlay = imageWrapper.querySelector('.image-overlay');
+project.tabs.forEach((tab, i) => {
+  const div = document.createElement('div');
+  div.className = 'service-image' + (i === 0 ? ' active' : '');
+  div.style.backgroundImage = `url('${tab.image}')`;
+  imageWrapper.insertBefore(div, overlay);
+});
+
+renderTab(0);
+
+/* ── RENDER TAB ──────────────────────────── */
+function renderTab(index) {
+  const tab = project.tabs[index];
+  const total = project.tabs.length;
+
+  document.getElementById('content-num').textContent = tab.num;
+  document.getElementById('content-title').textContent = tab.title;
+  document.getElementById('nav-indicator').textContent = `0${index + 1} / 0${total}`;
+
+  const conceptoEl = document.getElementById('concepto-body');
+  const descEl = document.getElementById('content-description');
+  const delSection = document.getElementById('deliverables-section');
+  const delList = document.getElementById('deliverables-list');
+
+  if (tab.type === 'concepto') {
+    // Concepto: párrafos, sin deliverables
+    conceptoEl.style.display = 'block';
+    conceptoEl.innerHTML = tab.body.map(p => `<p>${p}</p>`).join('');
+    descEl.style.display = 'none';
+    delSection.style.display = 'none';
+  } else {
+    // Servicio: descripción + deliverables
+    conceptoEl.style.display = 'none';
+    descEl.style.display = 'block';
+    descEl.textContent = tab.description;
+    delSection.style.display = 'flex';
+    delList.innerHTML = tab.deliverables.map(d => `<span class="deliverable-pill">${d}</span>`).join('');
+  }
+
+  document.getElementById('btn-prev').disabled = index === 0;
+  document.getElementById('btn-next').disabled = index === total - 1;
+}
+
+/* ── NAVIGATION ──────────────────────────── */
+function setTab(index) {
+  if (index === current) return;
+  const block = document.getElementById('content-block');
+  block.classList.add('transitioning');
+  setTimeout(() => {
+    current = index;
+    renderTab(index);
+    document.querySelectorAll('.service-image').forEach((img, i) => img.classList.toggle('active', i === index));
+    document.querySelectorAll('.sidebar-item').forEach((item, i) => item.classList.toggle('active', i === index));
+    block.classList.remove('transitioning');
+  }, 300);
+}
+
+document.getElementById('btn-prev').addEventListener('click', () => { if (current > 0) setTab(current - 1); });
+document.getElementById('btn-next').addEventListener('click', () => { if (current < project.tabs.length - 1) setTab(current + 1); });
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { if (current < project.tabs.length - 1) setTab(current + 1); }
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { if (current > 0) setTab(current - 1); }
+});
+
+/* ── CURSOR ──────────────────────────────── */
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; cursor.style.left=mx+'px'; cursor.style.top=my+'px'; });
+(function animateRing() { rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(animateRing); })();
+document.querySelectorAll('a,button').forEach(el => {
+  el.addEventListener('mouseenter', () => { ring.style.width='48px'; ring.style.height='48px'; ring.style.opacity='0.5'; });
+  el.addEventListener('mouseleave', () => { ring.style.width='32px'; ring.style.height='32px'; ring.style.opacity='1'; });
+});
+window.addEventListener('load', () => document.getElementById('project-hero').classList.add('loaded'));
+
+const nav = document.querySelector('nav');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > window.innerHeight * 0.7) nav.classList.add('scrolled');
+  else nav.classList.remove('scrolled');
+});
+
+function submitContactForm(e) {
+  e.preventDefault();
+  const nombre = document.getElementById('c-nombre').value;
+  const mail = document.getElementById('c-mail').value;
+  const mensaje = document.getElementById('c-mensaje').value;
+  const subject = encodeURIComponent('Contacto desde LYM Studio — ' + nombre);
+  const body = encodeURIComponent('Nombre: ' + nombre + '\nMail: ' + mail + '\n\nMensaje:\n' + mensaje);
+  window.open('mailto:info@lym-studio.com?subject=' + subject + '&body=' + body);
+  document.getElementById('contact-form').style.display = 'none';
+  document.getElementById('contact-success').style.display = 'block';
+  setTimeout(() => {
+    document.getElementById('contact-form').style.display = 'block';
+    document.getElementById('contact-success').style.display = 'none';
+    document.getElementById('contact-form').reset();
+  }, 2500);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STUDIO — Arquitectura con Precisión Técnica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --surface: #141313;
+    --surface-dim: #141313;
+    --surface-container-low: #1c1b1b;
+    --surface-container: #201f1f;
+    --surface-container-high: #2a2a2a;
+    --surface-bright: #3a3939;
+    --on-surface: #e5e2e1;
+    --on-surface-variant: #c4c7c8;
+    --outline: #8e9192;
+    --outline-variant: #444748;
+    --primary: #ffffff;
+    --on-primary: #2f3131;
+    --secondary: #c7c6c6;
+    --background: #141313;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Sora', sans-serif;
+    background: var(--background);
+    color: var(--on-surface);
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    position: fixed;
+    width: 8px;
+    height: 8px;
+    background: var(--primary);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.1s ease;
+    transform: translate(-50%, -50%);
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(255,255,255,0.4);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transition: transform 0.15s ease, width 0.2s ease, height 0.2s ease, opacity 0.2s ease;
+    transform: translate(-50%, -50%);
+  }
+  body:hover .cursor { opacity: 1; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 48px;
+    border-bottom: 1px solid rgba(20, 19, 19, 0);
+    background: rgba(255, 255, 255, 0);
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+    transition: background 0.4s ease, border-color 0.4s ease, backdrop-filter 0.4s ease;
+  }
+
+  nav.scrolled {
+    background: rgba(255, 255, 255, 0.96);
+    border-bottom: 1px solid rgba(20, 19, 19, 0.08);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .nav-logo {
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: #ffffff;
+    text-decoration: none;
+  }
+
+  .nav-logo-img { filter: brightness(0) invert(1); transition: filter 0.4s ease; }
+  nav.scrolled .nav-logo-img { filter: brightness(0); }
+
+  .nav-links {
+    display: flex;
+    gap: 40px;
+    list-style: none;
+    margin-left: auto;
+  }
+
+  .nav-links a {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #ffffff;
+    text-decoration: none;
+    transition: color 0.4s ease;
+    position: relative;
+  }
+
+  .nav-links a.active { color: #ffffff; }
+  .nav-links a.active::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0; right: 0;
+    height: 1px;
+    background: #ffffff;
+  }
+  .nav-links a:hover { opacity: 0.7; }
+
+  nav.scrolled .nav-links a { color: #141313; }
+  nav.scrolled .nav-links a.active::after { background: #141313; }
+
+  .nav-cta {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #141313;
+    border: 1px solid #141313;
+    padding: 10px 20px;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+  }
+  .nav-cta:hover { background: #141313; color: #ffffff; }
+
+  /* ── SECTION BASE ── */
+  section { min-height: 100vh; position: relative; }
+
+  /* ── HERO ── */
+  #hero {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .hero-carousel {
+    position: absolute;
+    inset: 0;
+  }
+
+  .hero-slide {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center top;
+    filter: brightness(0.75);
+    opacity: 0;
+    transition: opacity 1.5s ease;
+  }
+
+  .hero-slide.active { opacity: 1; }
+
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(20,19,19,0.05) 0%, rgba(20,19,19,0.35) 100%);
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.9s ease 0.3s, transform 0.9s ease 0.3s;
+  }
+
+  #hero.loaded .hero-content { opacity: 1; transform: translateY(0); }
+
+  .hero-logo {
+    height: 56px;
+    width: auto;
+    filter: brightness(0) invert(1);
+  }
+
+  .hero-cta {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--primary);
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.7);
+    padding: 14px 36px;
+    border-radius: 9999px;
+    text-decoration: none;
+    transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+    backdrop-filter: blur(4px);
+  }
+  .hero-cta:hover {
+    background: rgba(255,255,255,0.15);
+    border-color: rgba(255,255,255,1);
+  }
+
+  .hero-scroll {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    z-index: 2;
+  }
+
+  .hero-scroll-line {
+    width: 1px;
+    height: 48px;
+    background: rgba(255,255,255,0.3);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-scroll-line::after {
+    content: '';
+    position: absolute;
+    top: -100%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--primary);
+    animation: scrollLine 2s ease infinite;
+  }
+  @keyframes scrollLine {
+    0% { top: -100%; }
+    100% { top: 100%; }
+  }
+
+  /* ── MANIFESTO ── */
+  #manifesto {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 120px 64px;
+    background: var(--surface-container-low);
+  }
+
+  .manifesto-inner {
+    max-width: 720px;
+    text-align: center;
+  }
+
+  .manifesto-text {
+    font-size: clamp(16px, 1.8vw, 20px);
+    font-weight: 400;
+    line-height: 1.7;
+    letter-spacing: -0.01em;
+  }
+
+  .manifesto-text strong {
+    color: var(--primary);
+    font-weight: 700;
+  }
+
+  .manifesto-text .secondary {
+    color: var(--on-surface-variant);
+  }
+
+  .manifesto-divider {
+    width: 48px;
+    height: 1px;
+    background: var(--outline);
+    margin: 48px auto 0;
+    opacity: 0.4;
+  }
+
+  /* ── SERVICES ── */
+  #services {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    min-height: 100vh;
+  }
+
+  .service-col {
+    position: relative;
+    border-right: 1px solid var(--outline-variant);
+    overflow: hidden;
+    cursor: pointer;
+    transition: flex 0.4s ease;
+  }
+  .service-col:last-child { border-right: none; }
+
+  .service-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0.3;
+    transition: opacity 0.5s ease;
+    filter: brightness(0.35);
+  }
+
+  .service-col.active .service-bg { opacity: 0.85; }
+  .service-col:hover .service-bg { opacity: 0.85; filter: brightness(0.6); }
+
+  .service-content {
+    position: relative;
+    z-index: 2;
+    padding: 48px 32px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  .service-num {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--outline);
+    margin-bottom: 12px;
+  }
+
+  .service-name {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--on-surface);
+  }
+
+  .service-desc {
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.6;
+    color: var(--on-surface-variant);
+    margin-top: 12px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, opacity 0.4s ease, margin-top 0.4s ease;
+    opacity: 0;
+  }
+
+  .service-col.active .service-desc {
+    max-height: 80px;
+    opacity: 1;
+  }
+
+  .service-col.active .service-name { color: var(--primary); }
+
+  /* ── FEATURED PROJECT ── */
+  #featured {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .featured-bg {
+    position: absolute;
+    inset: 0;
+    background-image: url('imagenes/general/featured.jpg');
+    background-size: cover;
+    background-position: center;
+    filter: brightness(0.6);
+    transform: scale(1.02);
+    transition: transform 0.6s ease;
+  }
+
+  #featured:hover .featured-bg { transform: scale(1); }
+
+  .featured-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(20,19,19,0.85) 0%,
+      rgba(20,19,19,0.1) 50%,
+      transparent 100%
+    );
+  }
+
+  .featured-content {
+    position: relative;
+    z-index: 2;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 64px;
+  }
+
+  .featured-meta-top {
+    position: absolute;
+    top: 80px;
+    right: 64px;
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .featured-meta-group { display: flex; flex-direction: column; gap: 4px; }
+
+  .meta-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--outline);
+  }
+
+  .meta-value {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--on-surface);
+  }
+
+  .featured-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 560px;
+  }
+
+  .featured-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--on-surface);
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 6px 12px;
+    border-radius: 4px;
+    width: fit-content;
+    backdrop-filter: blur(4px);
+  }
+
+  .featured-title {
+    font-size: clamp(18px, 2vw, 24px);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--primary);
+    line-height: 1.2;
+  }
+
+  .featured-description {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.7;
+    color: var(--on-surface-variant);
+    max-width: 420px;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--surface-container-low);
+    padding: 80px 64px 40px;
+    border-top: 1px solid var(--outline-variant);
+  }
+
+  .footer-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 64px;
+  }
+
+  .footer-brand { display: flex; flex-direction: column; gap: 16px; }
+
+  .footer-logo {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: var(--primary);
+  }
+
+  .footer-tagline {
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.6;
+    color: var(--on-surface-variant);
+    max-width: 320px;
+  }
+
+  .footer-connect { display: flex; flex-direction: column; gap: 12px; text-align: right; }
+
+  .footer-connect-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--on-surface);
+    margin-bottom: 4px;
+  }
+
+  .footer-social-link {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--outline);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-social-link:hover { color: var(--primary); }
+
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 32px;
+    border-top: 1px solid var(--outline-variant);
+  }
+
+  .footer-copy {
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    color: var(--outline);
+    text-transform: uppercase;
+  }
+
+  .footer-legal { display: flex; gap: 24px; }
+
+  .footer-legal a {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--outline);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-legal a:hover { color: var(--primary); }
+
+  /* ── SCROLL ANIMATIONS ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.35s; }
+
+  /* ── EQUIPO ── */
+  #equipo {
+    border-top: 1px solid var(--outline-variant);
+    min-height: auto;
+  }
+
+  .equipo-header {
+    padding: 56px 48px 40px;
+    border-bottom: 1px solid var(--outline-variant);
+    display: flex; align-items: flex-end; justify-content: space-between;
+  }
+
+  .equipo-header-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--outline); margin-bottom: 10px;
+  }
+
+  .equipo-header-title {
+    font-size: clamp(24px, 3vw, 40px); font-weight: 800;
+    letter-spacing: -0.02em; line-height: 1.1; color: var(--primary);
+  }
+
+  .equipo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    min-height: 80vh;
+  }
+
+  .equipo-col {
+    position: relative;
+    border-right: 1px solid var(--outline-variant);
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .equipo-col:last-child { border-right: none; }
+
+  .equipo-bg {
+    position: absolute; inset: 0;
+    background-size: cover; background-position: center top;
+    opacity: 0.25;
+    transition: opacity 0.5s ease, transform 0.6s ease;
+    transform: scale(1.04);
+    filter: brightness(0.45);
+  }
+
+  .equipo-col:hover .equipo-bg,
+  .equipo-col.open .equipo-bg {
+    opacity: 1;
+    transform: scale(1);
+    filter: brightness(0.75);
+  }
+
+  /* Panel deslizante de bio */
+  .equipo-panel {
+    position: absolute; inset: 0;
+    z-index: 3;
+    background: rgba(20,19,19,0.88);
+    backdrop-filter: blur(6px);
+    padding: 48px 40px;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    transform: translateX(-100%);
+    transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .equipo-col.open .equipo-panel { transform: translateX(0); }
+
+  .equipo-bio {
+    font-size: 13px; font-weight: 400; line-height: 1.75;
+    color: var(--on-surface-variant); max-width: 280px;
+    margin-top: 16px;
+  }
+
+  .equipo-panel-close {
+    position: absolute; top: 28px; right: 28px;
+    font-size: 18px; color: var(--outline);
+    cursor: pointer; transition: color 0.2s;
+    background: none; border: none; font-family: inherit;
+    line-height: 1;
+  }
+  .equipo-panel-close:hover { color: var(--primary); }
+
+  /* Contenido base visible */
+  .equipo-content {
+    position: relative; z-index: 2;
+    padding: 48px 40px;
+    height: 100%; min-height: 80vh;
+    display: flex; flex-direction: column; justify-content: flex-end;
+  }
+
+  .equipo-num {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--outline); margin-bottom: 14px;
+    transition: color 0.3s;
+  }
+  .equipo-col:hover .equipo-num,
+  .equipo-col.open .equipo-num { color: var(--secondary); }
+
+  .equipo-line {
+    width: 0; height: 1px; background: var(--primary);
+    margin-bottom: 20px; transition: width 0.4s ease;
+  }
+  .equipo-col:hover .equipo-line,
+  .equipo-col.open .equipo-line { width: 32px; }
+
+  .equipo-name {
+    font-size: clamp(18px, 2vw, 22px); font-weight: 700;
+    letter-spacing: -0.01em; color: var(--on-surface);
+    transition: color 0.3s;
+  }
+  .equipo-col:hover .equipo-name,
+  .equipo-col.open .equipo-name { color: var(--primary); }
+
+  .equipo-role {
+    font-size: 13px; font-weight: 400; color: var(--outline);
+    margin-top: 6px; transition: color 0.3s;
+  }
+
+  .equipo-hint {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--outline-variant);
+    margin-top: 16px; transition: opacity 0.3s;
+  }
+  .equipo-col:hover .equipo-hint { opacity: 0; }
+
+  /* Manifesto height */
+  #manifesto {
+    min-height: 50vh !important;
+    padding: 80px 64px;
+  }
+
+  /* FEATURED LINK */
+  .featured-link-overlay {
+    position: absolute; inset: 0; z-index: 3; display: block;
+  }
+
+  /* FOOTER CONTACT FORM */
+  .footer-connect {
+    text-align: left;
+    width: 100%;
+    max-width: 300px;
+  }
+  .modal-field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+  .modal-label { font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--outline); }
+  .modal-input, .modal-textarea {
+    background: var(--surface); border: 1px solid var(--outline-variant);
+    border-radius: 2px; padding: 12px 16px;
+    color: var(--primary); font-family: 'Sora', sans-serif; font-size: 14px;
+    outline: none; transition: border-color 0.2s;
+  }
+  .modal-input:focus, .modal-textarea:focus { border-color: var(--outline); }
+  .modal-textarea { resize: vertical; min-height: 120px; }
+  .modal-submit {
+    width: 100%; padding: 14px;
+    background: var(--primary); color: var(--on-primary);
+    border: none; border-radius: 2px;
+    font-family: 'Sora', sans-serif; font-size: 11px; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    cursor: pointer; transition: opacity 0.2s; margin-top: 8px;
+  }
+  .modal-submit:hover { opacity: 0.85; }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo"><img src="imagenes/general/lymstudio-logo.svg" alt="LYM Studio" class="nav-logo-img" style="height:22px; width:auto; display:block;"></a>
+  <ul class="nav-links">
+    <li><a href="index.html" class="active">El Estudio</a></li>
+    <li><a href="servicios.html">Qué Hacemos</a></li>
+    <li><a href="portfolio.html">Portfolio</a></li>
+  </ul>
+</nav>
+
+<!-- BLOQUE 1: HERO -->
+<section id="hero">
+  <div class="hero-carousel">
+    <div class="hero-slide active" style="background-image: url('imagenes/general/carrete-00.jpg');"></div>
+    <div class="hero-slide" style="background-image: url('imagenes/general/carrete-01.jpg');"></div>
+    <div class="hero-slide" style="background-image: url('imagenes/general/carrete-02.jpg');"></div>
+    <div class="hero-slide" style="background-image: url('imagenes/general/carrete-03.jpg');"></div>
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <img src="imagenes/general/lymstudio-logo.svg" alt="LYM Studio" class="hero-logo">
+    <a href="portfolio.html" class="hero-cta">Explorar Proyectos</a>
+  </div>
+  <div class="hero-scroll">
+    <div class="hero-scroll-line"></div>
+  </div>
+</section>
+
+<!-- BLOQUE 2: SERVICIOS -->
+<section id="services">
+  <div class="service-col active" data-service="0">
+    <div class="service-bg" style="background-image: url('imagenes/general/arquitectura.jpg');"></div>
+    <div class="service-content">
+      <span class="service-num">01</span>
+      <span class="service-name">Arquitectura</span>
+      <p class="service-desc">Proyectos de alta complejidad estructural con rigor técnico y visión estética.</p>
+    </div>
+  </div>
+  <div class="service-col" data-service="1">
+    <div class="service-bg" style="background-image: url('imagenes/general/diseño.jpg');"></div>
+    <div class="service-content">
+      <span class="service-num">02</span>
+      <span class="service-name">Diseño Comercial</span>
+      <p class="service-desc">Conceptualización formal que integra función, estructura y experiencia espacial.</p>
+    </div>
+  </div>
+  <div class="service-col" data-service="2">
+    <div class="service-bg" style="background-image: url('imagenes/general/renders.jpg');"></div>
+    <div class="service-content">
+      <span class="service-num">03</span>
+      <span class="service-name">Documentación Visual</span>
+      <p class="service-desc">Visualizaciones fotorrealistas que comunican la esencia del proyecto antes de construirse.</p>
+    </div>
+  </div>
+  <div class="service-col" data-service="3">
+    <div class="service-bg" style="background-image: url('imagenes/general/branding.jpg');"></div>
+    <div class="service-content">
+      <span class="service-num">04</span>
+      <span class="service-name">Branding</span>
+      <p class="service-desc">Identidad visual integrada a la volumetría y el espacio arquitectónico.</p>
+    </div>
+  </div>
+</section>
+
+<!-- BLOQUE 3: MANIFESTO -->
+<section id="manifesto">
+  <div class="manifesto-inner">
+    <p class="manifesto-text reveal">
+      <strong>Somos un estudio de arquitectura.</strong>
+      <span class="secondary"> Hacemos que tu proyecto exista antes de construirse.</span>
+    </p>
+    <div class="manifesto-divider reveal reveal-delay-1"></div>
+  </div>
+</section>
+
+<!-- BLOQUE 4: EQUIPO -->
+<section id="equipo">
+
+  <div class="equipo-header">
+    <div>
+      <h2 class="equipo-header-title">Equipo</h2>
+    </div>
+  </div>
+
+  <div class="equipo-grid">
+
+    <div class="equipo-col" data-bio="Juan Ignacio es arquitecto egresado de la Universidad de Buenos Aires y cuenta con un MBA cursado en España. Es socio cofundador de LYM Studio, donde participa en la dirección del estudio con foco en gestión, estrategia y desarrollo de proyectos, especializándose en gestión, arquitectura y visualización para proyectos residenciales, comerciales e inmobiliarios. Trabajó en proyectos de distintas escalas en Argentina, Estados Unidos y Arabia Saudita, y participó en concursos internacionales de arquitectura en Corea del Sur y Grecia.">
+      <div class="equipo-bg" style="background-image: url('imagenes/equipo/juan.jpg');"></div>
+      <div class="equipo-content">
+        <div class="equipo-line"></div>
+        <span class="equipo-num">01</span>
+        <p class="equipo-name">Juan Ignacio</p>
+        <p class="equipo-role">Arquitecto</p>
+        <p class="equipo-hint">Ver biografía</p>
+      </div>
+      <div class="equipo-panel">
+        <button class="equipo-panel-close" aria-label="Cerrar">×</button>
+        <div class="equipo-line"></div>
+        <p class="equipo-name">Juan Ignacio</p>
+        <p class="equipo-role">Arquitecto</p>
+        <p class="equipo-bio">Juan Ignacio es arquitecto egresado de la Universidad de Buenos Aires y cuenta con un MBA cursado en España. Es socio cofundador de LYM Studio, donde participa en la dirección del estudio con foco en gestión, estrategia y desarrollo de proyectos, especializándose en gestión, arquitectura y visualización para proyectos residenciales, comerciales e inmobiliarios. Trabajó en proyectos de distintas escalas en Argentina, Estados Unidos y Arabia Saudita, y participó en concursos internacionales de arquitectura en Corea del Sur y Grecia.</p>
+      </div>
+    </div>
+
+    <div class="equipo-col" data-bio="Agustín combina su formación en arquitectura con una profunda sensibilidad hacia el diseño de espacios. Lidera los procesos de visualización y renders 3D, traduciendo cada proyecto en imágenes que comunican antes de construirse.">
+      <div class="equipo-bg" style="background-image: url('imagenes/equipo/agustin.jpg');"></div>
+      <div class="equipo-content">
+        <div class="equipo-line"></div>
+        <span class="equipo-num">02</span>
+        <p class="equipo-name">Agustín</p>
+        <p class="equipo-role">Arquitecto</p>
+        <p class="equipo-hint">Ver biografía</p>
+      </div>
+      <div class="equipo-panel">
+        <button class="equipo-panel-close" aria-label="Cerrar">×</button>
+        <div class="equipo-line"></div>
+        <p class="equipo-name">Agustín</p>
+        <p class="equipo-role">Arquitecto</p>
+        <p class="equipo-bio">Agustín combina su formación en arquitectura con una profunda sensibilidad hacia el diseño de espacios. Lidera los procesos de visualización y renders 3D, traduciendo cada proyecto en imágenes que comunican antes de construirse.</p>
+      </div>
+    </div>
+
+    <div class="equipo-col" data-bio="Tomás es diseñador gráfico especializado en identidad visual para proyectos arquitectónicos y desarrollos inmobiliarios. Dirige el área de branding y comunicación del estudio, desde el naming hasta el brochure final.">
+      <div class="equipo-bg" style="background-image: url('imagenes/equipo/tomas.jpg');"></div>
+      <div class="equipo-content">
+        <div class="equipo-line"></div>
+        <span class="equipo-num">03</span>
+        <p class="equipo-name">Tomás</p>
+        <p class="equipo-role">Diseñador</p>
+        <p class="equipo-hint">Ver biografía</p>
+      </div>
+      <div class="equipo-panel">
+        <button class="equipo-panel-close" aria-label="Cerrar">×</button>
+        <div class="equipo-line"></div>
+        <p class="equipo-name">Tomás</p>
+        <p class="equipo-role">Diseñador</p>
+        <p class="equipo-bio">Tomás es diseñador gráfico especializado en identidad visual para proyectos arquitectónicos y desarrollos inmobiliarios. Dirige el área de branding y comunicación del estudio, desde el naming hasta el brochure final.</p>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- BLOQUE 5: FEATURED PROJECT -->
+<section id="featured">
+  <a href="proyecto.html?id=trelles" class="featured-link-overlay" aria-label="Ver proyecto Trelles"></a>
+  <div class="featured-bg"></div>
+  <div class="featured-overlay"></div>
+  <div class="featured-content">
+    <div class="featured-meta-top reveal">
+      <div class="featured-meta-group">
+        <span class="meta-label">Locación</span>
+        <span class="meta-value">CABA</span>
+      </div>
+<div class="featured-meta-group">
+        <span class="meta-label">Año</span>
+        <span class="meta-value">2024</span>
+      </div>
+    </div>
+    <div class="featured-bottom">
+      <span class="featured-badge reveal">Featured Project</span>
+      <h2 class="featured-title reveal reveal-delay-1">Proyecto Trelles</h2>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="footer-logo"><img src="imagenes/general/iso-logo.svg" alt="LYM Studio" style="height:128px; width:auto; filter:brightness(0) invert(1); display:block;"></div>
+      <p class="footer-tagline">Suscritos a la excelencia técnica. Desarrollamos infraestructuras que perduran a través de la precisión matemática y el rigor estético.</p>
+      <div style="display:flex; gap:20px; margin-top:4px;">
+        <a href="https://www.instagram.com/lymstudio.ar/" target="_blank" class="footer-social-link">Instagram</a>
+        <a href="https://www.behance.net/lymstudio" target="_blank" class="footer-social-link">Behance</a>
+      </div>
+    </div>
+    <div class="footer-connect">
+      <p class="footer-connect-label">Ponerse en contacto</p>
+      <form id="contact-form" onsubmit="submitContactForm(event)">
+        <div class="modal-field">
+          <label class="modal-label" for="c-nombre">Nombre</label>
+          <input class="modal-input" id="c-nombre" type="text" placeholder="Tu nombre" required>
+        </div>
+        <div class="modal-field">
+          <label class="modal-label" for="c-mail">Mail</label>
+          <input class="modal-input" id="c-mail" type="email" placeholder="tu@mail.com" required>
+        </div>
+        <div class="modal-field">
+          <label class="modal-label" for="c-mensaje">Mensaje</label>
+          <textarea class="modal-textarea" id="c-mensaje" placeholder="Contanos sobre tu proyecto..." required></textarea>
+        </div>
+        <button class="modal-submit" type="submit">Enviar mensaje</button>
+      </form>
+      <div class="modal-success" id="contact-success" style="display:none;">
+        <p style="color:var(--on-surface-variant); font-size:14px; padding:12px 0;">¡Gracias! Tu mensaje fue enviado correctamente.</p>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2025 LYM Studio. All Rights Reserved. — Web diseñada y desarrollada por LYM Studio.</span>
+  </div>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+  });
+  function animateRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  document.querySelectorAll('a, button, .service-col').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      ring.style.width = '48px';
+      ring.style.height = '48px';
+      ring.style.opacity = '0.6';
+    });
+    el.addEventListener('mouseleave', () => {
+      ring.style.width = '32px';
+      ring.style.height = '32px';
+      ring.style.opacity = '1';
+    });
+  });
+
+  // Hero load animation
+  window.addEventListener('load', () => {
+    document.getElementById('hero').classList.add('loaded');
+  });
+
+  // Hero carousel — fundido entre imágenes cada 4s
+  const heroSlides = document.querySelectorAll('.hero-slide');
+  let heroSlideIndex = 0;
+  setInterval(() => {
+    heroSlides[heroSlideIndex].classList.remove('active');
+    heroSlideIndex = (heroSlideIndex + 1) % heroSlides.length;
+    heroSlides[heroSlideIndex].classList.add('active');
+  }, 4000);
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.15 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Services interaction
+  const cols = document.querySelectorAll('.service-col');
+  cols.forEach(col => {
+    col.addEventListener('mouseenter', () => {
+      cols.forEach(c => c.classList.remove('active'));
+      col.classList.add('active');
+    });
+  });
+
+  // Nav scroll — transparente sobre el hero, blanca al alejarse
+  const nav = document.querySelector('nav');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > window.innerHeight * 0.7) {
+      nav.classList.add('scrolled');
+    } else {
+      nav.classList.remove('scrolled');
+    }
+  });
+
+  // Equipo panel — click abre, × cierra
+  document.querySelectorAll('.equipo-col').forEach(col => {
+    col.addEventListener('click', (e) => {
+      // Si click en el botón cerrar
+      if (e.target.classList.contains('equipo-panel-close')) {
+        col.classList.remove('open');
+        return;
+      }
+      // Toggle panel
+      const isOpen = col.classList.contains('open');
+      document.querySelectorAll('.equipo-col').forEach(c => c.classList.remove('open'));
+      if (!isOpen) col.classList.add('open');
+    });
+  });
+
+  function submitContactForm(e) {
+    e.preventDefault();
+    const nombre = document.getElementById('c-nombre').value;
+    const mail = document.getElementById('c-mail').value;
+    const mensaje = document.getElementById('c-mensaje').value;
+    const subject = encodeURIComponent('Contacto desde LYM Studio — ' + nombre);
+    const body = encodeURIComponent('Nombre: ' + nombre + '\nMail: ' + mail + '\n\nMensaje:\n' + mensaje);
+    window.open('mailto:info@lym-studio.com?subject=' + subject + '&body=' + body);
+    document.getElementById('contact-form').style.display = 'none';
+    document.getElementById('contact-success').style.display = 'block';
+    setTimeout(() => {
+      document.getElementById('contact-form').style.display = 'block';
+      document.getElementById('contact-success').style.display = 'none';
+      document.getElementById('contact-form').reset();
+    }, 2500);
+  }
+</script>
+
+</body>
+</html>
