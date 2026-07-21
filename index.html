@@ -372,7 +372,7 @@
   .featured-bg {
     position: absolute;
     inset: 0;
-    background-image: url('imagenes/general/featured.jpg');
+    background-image: url('imagenes/proyecto/trelles/gallery-01.jpg');
     background-size: cover;
     background-position: center;
     filter: brightness(0.6);
@@ -472,18 +472,18 @@
   /* ── FOOTER ── */
   footer {
     background: var(--surface-container-low);
-    padding: 80px 64px 40px;
+    padding: 56px 64px 40px;
     border-top: 1px solid var(--outline-variant);
   }
 
   .footer-top {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 64px;
+    align-items: stretch;
+    margin-bottom: 40px;
   }
 
-  .footer-brand { display: flex; flex-direction: column; gap: 16px; }
+  .footer-brand { display: flex; flex-direction: column; justify-content: space-between; gap: 16px; }
 
   .footer-logo {
     font-size: 20px;
@@ -699,9 +699,11 @@
   .footer-connect {
     text-align: left;
     width: 100%;
-    max-width: 300px;
+    max-width: 560px;
   }
-  .modal-field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+  #contact-form { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 20px; }
+  .modal-field { display: flex; flex-direction: column; gap: 8px; }
+  .modal-field-full { grid-column: 1 / -1; }
   .modal-label { font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--outline); }
   .modal-input, .modal-textarea {
     background: var(--surface); border: 1px solid var(--outline-variant);
@@ -710,14 +712,15 @@
     outline: none; transition: border-color 0.2s;
   }
   .modal-input:focus, .modal-textarea:focus { border-color: var(--outline); }
-  .modal-textarea { resize: vertical; min-height: 120px; }
+  .modal-textarea { resize: vertical; min-height: 64px; }
   .modal-submit {
+    grid-column: 1 / -1;
     width: 100%; padding: 14px;
     background: var(--primary); color: var(--on-primary);
     border: none; border-radius: 2px;
     font-family: 'Sora', sans-serif; font-size: 11px; font-weight: 600;
     letter-spacing: 0.12em; text-transform: uppercase;
-    cursor: pointer; transition: opacity 0.2s; margin-top: 8px;
+    cursor: pointer; transition: opacity 0.2s; margin-top: 4px;
   }
   .modal-submit:hover { opacity: 0.85; }
 </style>
@@ -769,7 +772,7 @@
     <div class="service-bg" style="background-image: url('imagenes/general/diseño.jpg');"></div>
     <div class="service-content">
       <span class="service-num">02</span>
-      <span class="service-name">Diseño Comercial</span>
+      <span class="service-name">Brochure Comercial</span>
       <p class="service-desc">Conceptualización formal que integra función, estructura y experiencia espacial.</p>
     </div>
   </div>
@@ -831,7 +834,7 @@
       </div>
     </div>
 
-    <div class="equipo-col" data-bio="Agustín combina su formación en arquitectura con una profunda sensibilidad hacia el diseño de espacios. Lidera los procesos de visualización y renders 3D, traduciendo cada proyecto en imágenes que comunican antes de construirse.">
+    <div class="equipo-col" data-bio="Arquitecto egresado de la Universidad de Buenos Aires. Es socio cofundador de LYM Studio, donde lidera el diseño, la dirección creativa y la documentación técnica de los proyectos. Especializado en arquitectura y visualización para proyectos residenciales de todas las escalas. Combina su práctica profesional con la docencia como ayudante de cátedra en el Taller Transversal de Diseño en la FADU UBA.">
       <div class="equipo-bg" style="background-image: url('imagenes/equipo/agustin.jpg');"></div>
       <div class="equipo-content">
         <div class="equipo-line"></div>
@@ -845,7 +848,7 @@
         <div class="equipo-line"></div>
         <p class="equipo-name">Agustín</p>
         <p class="equipo-role">Arquitecto</p>
-        <p class="equipo-bio">Agustín combina su formación en arquitectura con una profunda sensibilidad hacia el diseño de espacios. Lidera los procesos de visualización y renders 3D, traduciendo cada proyecto en imágenes que comunican antes de construirse.</p>
+        <p class="equipo-bio">Arquitecto egresado de la Universidad de Buenos Aires. Es socio cofundador de LYM Studio, donde lidera el diseño, la dirección creativa y la documentación técnica de los proyectos. Especializado en arquitectura y visualización para proyectos residenciales de todas las escalas. Combina su práctica profesional con la docencia como ayudante de cátedra en el Taller Transversal de Diseño en la FADU UBA.</p>
       </div>
     </div>
 
@@ -898,11 +901,11 @@
 <footer>
   <div class="footer-top">
     <div class="footer-brand">
-      <div class="footer-logo"><img src="imagenes/general/iso-logo.svg" alt="LYM Studio" style="height:128px; width:auto; filter:brightness(0) invert(1); display:block;"></div>
-      <p class="footer-tagline">Suscritos a la excelencia técnica. Desarrollamos infraestructuras que perduran a través de la precisión matemática y el rigor estético.</p>
-      <div style="display:flex; gap:20px; margin-top:4px;">
+      <div class="footer-logo"><img src="imagenes/general/iso-logo.svg" alt="LYM Studio" style="height:118px; width:auto; filter:brightness(0) invert(1); display:block;"></div>
+      <div style="display:flex; flex-direction:column; gap:8px; margin-top:4px;">
         <a href="https://www.instagram.com/lymstudio.ar/" target="_blank" class="footer-social-link">Instagram</a>
         <a href="https://www.behance.net/lymstudio" target="_blank" class="footer-social-link">Behance</a>
+        <a href="https://www.linkedin.com/company/lymstudio" target="_blank" class="footer-social-link">LinkedIn</a>
       </div>
     </div>
     <div class="footer-connect">
@@ -916,7 +919,7 @@
           <label class="modal-label" for="c-mail">Mail</label>
           <input class="modal-input" id="c-mail" type="email" placeholder="tu@mail.com" required>
         </div>
-        <div class="modal-field">
+        <div class="modal-field modal-field-full">
           <label class="modal-label" for="c-mensaje">Mensaje</label>
           <textarea class="modal-textarea" id="c-mensaje" placeholder="Contanos sobre tu proyecto..." required></textarea>
         </div>

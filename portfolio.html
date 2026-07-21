@@ -122,9 +122,11 @@
   .footer-connect {
     text-align: left;
     width: 100%;
-    max-width: 300px;
+    max-width: 560px;
   }
-  .modal-field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+  #contact-form { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 20px; }
+  .modal-field { display: flex; flex-direction: column; gap: 8px; }
+  .modal-field-full { grid-column: 1 / -1; }
   .modal-label { font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--outline); }
   .modal-input, .modal-textarea {
     background: var(--surface);
@@ -134,14 +136,15 @@
     outline: none; transition: border-color 0.2s;
   }
   .modal-input:focus, .modal-textarea:focus { border-color: var(--outline); }
-  .modal-textarea { resize: vertical; min-height: 120px; }
+  .modal-textarea { resize: vertical; min-height: 64px; }
   .modal-submit {
+    grid-column: 1 / -1;
     width: 100%; padding: 14px;
     background: var(--primary); color: var(--on-primary);
     border: none; border-radius: 2px;
     font-family: 'Sora', sans-serif; font-size: 11px; font-weight: 600;
     letter-spacing: 0.12em; text-transform: uppercase;
-    cursor: pointer; transition: opacity 0.2s; margin-top: 8px;
+    cursor: pointer; transition: opacity 0.2s; margin-top: 4px;
   }
   .modal-submit:hover { opacity: 0.85; }
   .modal-success { text-align: center; color: var(--on-surface-variant); font-size: 14px; padding: 24px 0; display: none; }
@@ -252,11 +255,11 @@
 
   /* FOOTER */
   footer {
-    background: var(--surface-container-low); padding: 64px 48px 40px;
+    background: var(--surface-container-low); padding: 48px 48px 40px;
     border-top: 1px solid var(--outline-variant);
   }
-  .footer-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 48px; }
-  .footer-brand { display: flex; flex-direction: column; gap: 12px; }
+  .footer-top { display: flex; justify-content: space-between; align-items: stretch; margin-bottom: 36px; }
+  .footer-brand { display: flex; flex-direction: column; justify-content: space-between; gap: 12px; }
   .footer-logo { font-size: 20px; font-weight: 800; letter-spacing: 0.06em; color: var(--primary); }
   .footer-tagline { font-size: 13px; line-height: 1.6; color: var(--on-surface-variant); max-width: 320px; }
   .footer-connect { display: flex; flex-direction: column; gap: 10px; text-align: right; }
@@ -310,7 +313,7 @@
     <div class="project-card-overlay"></div>
     <div class="project-card-arrow">↗</div>
     <div class="project-card-content">
-      <span class="project-card-category">Real Estate · Buenos Aires</span>
+      <span class="project-card-category">Residencial · Buenos Aires</span>
       <h2 class="project-card-title">Trelles</h2>
       <div class="project-card-meta">
         <span>2025</span>
@@ -328,7 +331,7 @@
     <div class="project-card-overlay"></div>
     <div class="project-card-arrow">↗</div>
     <div class="project-card-content">
-      <span class="project-card-category">Residencial · Buenos Aires</span>
+      <span class="project-card-category">Residencial · San Juan</span>
       <h2 class="project-card-title">Cañaveral I</h2>
       <div class="project-card-meta">
         <span>2025</span>
@@ -340,12 +343,12 @@
     </div>
   </a>
 
-  <a href="proyecto.html?id=nordelta" class="project-card" data-tags="arquitectura,visualizaciones">
+  <a href="proyecto.html?id=atlikum" class="project-card" data-tags="arquitectura,visualizaciones">
     <div class="project-card-bg" style="background-image: url('imagenes/thumbnails/atlikum.jpg');"></div>
     <div class="project-card-overlay"></div>
     <div class="project-card-arrow">↗</div>
     <div class="project-card-content">
-      <span class="project-card-category">Oficinas · CABA</span>
+      <span class="project-card-category">Residencial · Buenos Aires</span>
       <h2 class="project-card-title">Atlikum</h2>
       <div class="project-card-meta">
         <span>2023</span>
@@ -357,12 +360,12 @@
     </div>
   </a>
 
-  <a href="proyecto.html?id=caballito" class="project-card" data-tags="branding,arquitectura,visualizaciones">
+  <a href="proyecto.html?id=olofpalme" class="project-card" data-tags="branding,arquitectura,visualizaciones">
     <div class="project-card-bg" style="background-image: url('imagenes/thumbnails/olofpalme.jpg');"></div>
     <div class="project-card-overlay"></div>
     <div class="project-card-arrow">↗</div>
     <div class="project-card-content">
-      <span class="project-card-category">Comercial · Buenos Aires</span>
+      <span class="project-card-category">Residencial · Buenos Aires</span>
       <h2 class="project-card-title">Olof Palme</h2>
       <div class="project-card-meta">
         <span>2025</span>
@@ -380,7 +383,7 @@
     <div class="project-card-overlay"></div>
     <div class="project-card-arrow">↗</div>
     <div class="project-card-content">
-      <span class="project-card-category">Residencial · Buenos Aires</span>
+      <span class="project-card-category">Usos Múltiples · Buenos Aires</span>
       <h2 class="project-card-title">El Cazal</h2>
       <div class="project-card-meta">
         <span>2024</span>
@@ -422,11 +425,11 @@
 <footer>
   <div class="footer-top">
     <div class="footer-brand">
-      <div class="footer-logo"><img src="imagenes/general/iso-logo.svg" alt="LYM Studio" style="height:128px; width:auto; filter:brightness(0) invert(1); display:block;"></div>
-      <p class="footer-tagline">Suscritos a la excelencia técnica. Desarrollamos infraestructuras que perduran a través de la precisión matemática y el rigor estético.</p>
-      <div style="display:flex; gap:20px; margin-top:4px;">
+      <div class="footer-logo"><img src="imagenes/general/iso-logo.svg" alt="LYM Studio" style="height:118px; width:auto; filter:brightness(0) invert(1); display:block;"></div>
+      <div style="display:flex; flex-direction:column; gap:8px; margin-top:4px;">
         <a href="https://www.instagram.com/lymstudio.ar/" target="_blank" class="footer-social-link">Instagram</a>
         <a href="https://www.behance.net/lymstudio" target="_blank" class="footer-social-link">Behance</a>
+        <a href="https://www.linkedin.com/company/lymstudio" target="_blank" class="footer-social-link">LinkedIn</a>
       </div>
     </div>
     <div class="footer-connect">
@@ -440,7 +443,7 @@
           <label class="modal-label" for="c-mail">Mail</label>
           <input class="modal-input" id="c-mail" type="email" placeholder="tu@mail.com" required>
         </div>
-        <div class="modal-field">
+        <div class="modal-field modal-field-full">
           <label class="modal-label" for="c-mensaje">Mensaje</label>
           <textarea class="modal-textarea" id="c-mensaje" placeholder="Contanos sobre tu proyecto..." required></textarea>
         </div>
