@@ -143,7 +143,7 @@
     width: 100%;
     max-width: 560px;
   }
-  #contact-form { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 20px; }
+  #contact-form { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 20px; scroll-margin-top: 100px; }
   .modal-field { display: flex; flex-direction: column; gap: 8px; }
   .modal-field-full { grid-column: 1 / -1; }
   .modal-label { font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--outline); }
@@ -488,7 +488,8 @@
     </div>
     <div class="footer-connect">
       <p class="footer-connect-label">Ponerse en contacto</p>
-      <form id="contact-form" onsubmit="submitContactForm(event)">
+      <form id="contact-form" name="contact" method="POST" data-netlify="true" onsubmit="submitContactForm(event)">
+          <input type="hidden" name="form-name" value="contact">
         <div class="modal-field">
           <label class="modal-label" for="c-nombre">Nombre</label>
           <input class="modal-input" id="c-nombre" type="text" placeholder="Tu nombre" required>
@@ -551,19 +552,25 @@
 
   function submitContactForm(e) {
     e.preventDefault();
-    const nombre = document.getElementById('c-nombre').value;
-    const mail = document.getElementById('c-mail').value;
-    const mensaje = document.getElementById('c-mensaje').value;
-    const subject = encodeURIComponent('Contacto desde LYM Studio — ' + nombre);
-    const body = encodeURIComponent('Nombre: ' + nombre + '\nMail: ' + mail + '\n\nMensaje:\n' + mensaje);
-    window.open('mailto:info@lym-studio.com?subject=' + subject + '&body=' + body);
-    document.getElementById('contact-form').style.display = 'none';
-    document.getElementById('contact-success').style.display = 'block';
-    setTimeout(() => {
-      document.getElementById('contact-form').style.display = 'block';
-      document.getElementById('contact-success').style.display = 'none';
-      document.getElementById('contact-form').reset();
-    }, 2500);
+    const form = document.getElementById('contact-form');
+    const formData = new FormData(form);
+    fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(formData).toString()
+    })
+      .then(() => {
+        form.style.display = 'none';
+        document.getElementById('contact-success').style.display = 'block';
+        setTimeout(() => {
+          form.style.display = 'block';
+          document.getElementById('contact-success').style.display = 'none';
+          form.reset();
+        }, 2500);
+      })
+      .catch(() => {
+        alert('Hubo un error al enviar el mensaje. Por favor, intentá de nuevo o escribinos a info@lym-studio.com');
+      });
   }
 </script>
 
