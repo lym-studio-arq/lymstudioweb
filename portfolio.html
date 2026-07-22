@@ -234,6 +234,7 @@
     transition: opacity 0.3s, transform 0.3s;
   }
   .project-card:hover .project-card-arrow { opacity: 1; transform: translateY(0); }
+  .project-card-arrow .arrow-icon { width: 14px; height: 14px; display: block; filter: brightness(0) invert(1); }
 
   /* SERVICES row tags en card hover */
   .project-card-services {
@@ -302,6 +303,8 @@
 
   /* ══════════ MOBILE ══════════ */
   @media (max-width: 860px) {
+    .cursor, .cursor-ring { display: none !important; }
+    body { cursor: auto; }
     nav { padding: 16px 20px; }
     .nav-toggle { display: block; }
     .nav-links {
@@ -362,7 +365,7 @@
   <a href="proyecto.html?id=trelles" class="project-card" data-tags="branding,arquitectura,visualizaciones">
     <div class="project-card-bg" style="background-image: url('imagenes/thumbnails/trelles.jpg');"></div>
     <div class="project-card-overlay"></div>
-    <div class="project-card-arrow">↗</div>
+    <div class="project-card-arrow"><img src="imagenes/svg/arrow-up.svg" alt="" class="arrow-icon"></div>
     <div class="project-card-content">
       <span class="project-card-category">Residencial · Buenos Aires</span>
       <h2 class="project-card-title">Trelles</h2>
@@ -380,7 +383,7 @@
   <a href="proyecto.html?id=canaveral" class="project-card" data-tags="branding,visualizaciones">
     <div class="project-card-bg" style="background-image: url('imagenes/thumbnails/cañaveral.png');"></div>
     <div class="project-card-overlay"></div>
-    <div class="project-card-arrow">↗</div>
+    <div class="project-card-arrow"><img src="imagenes/svg/arrow-up.svg" alt="" class="arrow-icon"></div>
     <div class="project-card-content">
       <span class="project-card-category">Residencial · San Juan</span>
       <h2 class="project-card-title">Cañaveral I</h2>
@@ -397,7 +400,7 @@
   <a href="proyecto.html?id=atlikum" class="project-card" data-tags="arquitectura,visualizaciones">
     <div class="project-card-bg" style="background-image: url('imagenes/thumbnails/atlikum.jpg');"></div>
     <div class="project-card-overlay"></div>
-    <div class="project-card-arrow">↗</div>
+    <div class="project-card-arrow"><img src="imagenes/svg/arrow-up.svg" alt="" class="arrow-icon"></div>
     <div class="project-card-content">
       <span class="project-card-category">Residencial · Buenos Aires</span>
       <h2 class="project-card-title">Atlikum</h2>
@@ -414,7 +417,7 @@
   <a href="proyecto.html?id=olofpalme" class="project-card" data-tags="branding,arquitectura,visualizaciones">
     <div class="project-card-bg" style="background-image: url('imagenes/thumbnails/olofpalme.jpg');"></div>
     <div class="project-card-overlay"></div>
-    <div class="project-card-arrow">↗</div>
+    <div class="project-card-arrow"><img src="imagenes/svg/arrow-up.svg" alt="" class="arrow-icon"></div>
     <div class="project-card-content">
       <span class="project-card-category">Residencial · Buenos Aires</span>
       <h2 class="project-card-title">Olof Palme</h2>
@@ -432,7 +435,7 @@
   <a href="proyecto.html?id=elcazal" class="project-card" data-tags="branding,visualizaciones">
     <div class="project-card-bg" style="background-image: url('imagenes/thumbnails/cazal.jpg');"></div>
     <div class="project-card-overlay"></div>
-    <div class="project-card-arrow">↗</div>
+    <div class="project-card-arrow"><img src="imagenes/svg/arrow-up.svg" alt="" class="arrow-icon"></div>
     <div class="project-card-content">
       <span class="project-card-category">Usos Múltiples · Buenos Aires</span>
       <h2 class="project-card-title">El Cazal</h2>
@@ -449,7 +452,7 @@
   <a href="proyecto.html?id=honda" class="project-card" data-tags="branding,diseño">
     <div class="project-card-bg" style="background-image: url('imagenes/thumbnails/honda.png');"></div>
     <div class="project-card-overlay"></div>
-    <div class="project-card-arrow">↗</div>
+    <div class="project-card-arrow"><img src="imagenes/svg/arrow-up.svg" alt="" class="arrow-icon"></div>
     <div class="project-card-content">
       <span class="project-card-category">Comercial · Buenos Aires</span>
       <h2 class="project-card-title">Honda</h2>
@@ -468,7 +471,7 @@
 <!-- CTA -->
 <div class="cta-section">
   <span class="cta-label">¿Tenés un proyecto?</span>
-  <p class="cta-title">Empezá tu viaje arquitectónico.</p>
+  <p class="cta-title">Desafianos a ir más allá.</p>
   <a href="#contact-form" class="cta-btn">Ponerse en contacto</a>
 </div>
 
