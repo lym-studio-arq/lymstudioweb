@@ -90,6 +90,24 @@
   }
   .nav-cta:hover { background: var(--primary); color: var(--on-primary); }
 
+  .nav-toggle {
+    display: none;
+    background: none; border: none; padding: 0;
+    width: 26px; height: 18px; position: relative;
+    cursor: pointer; z-index: 101;
+  }
+  .nav-toggle span {
+    position: absolute; left: 0; right: 0; height: 2px;
+    background: var(--primary); transition: transform 0.3s ease, opacity 0.3s ease, background 0.3s ease;
+  }
+  .nav-toggle span:nth-child(1) { top: 0; }
+  .nav-toggle span:nth-child(2) { top: 8px; }
+  .nav-toggle span:nth-child(3) { top: 16px; }
+  nav.scrolled .nav-toggle span { background: #141313; }
+  .nav-toggle.active span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+  .nav-toggle.active span:nth-child(2) { opacity: 0; }
+  .nav-toggle.active span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
   /* PAGE HERO */
   .page-hero {
     padding-top: 65px;
@@ -281,6 +299,37 @@
     color: var(--outline); text-decoration: none; transition: color 0.2s;
   }
   .footer-legal a:hover { color: var(--primary); }
+
+  /* ══════════ MOBILE ══════════ */
+  @media (max-width: 860px) {
+    nav { padding: 16px 20px; }
+    .nav-toggle { display: block; }
+    .nav-links {
+      position: fixed; top: 0; right: 0; height: 100vh; width: min(75vw, 320px);
+      background: var(--surface-container-low);
+      flex-direction: column; align-items: flex-start; justify-content: center;
+      gap: 28px; margin-left: 0; padding: 0 40px;
+      transform: translateX(100%); transition: transform 0.4s ease;
+      box-shadow: -8px 0 24px rgba(0,0,0,0.3);
+    }
+    .nav-links.open { transform: translateX(0); }
+    .nav-links a, nav.scrolled .nav-links a { color: var(--primary) !important; font-size: 15px; }
+    .nav-links a.active, nav.scrolled .nav-links a.active { color: var(--primary) !important; }
+
+    .page-hero { padding-left: 24px; padding-right: 24px; padding-bottom: 32px; }
+
+    .portfolio-grid { grid-template-columns: 1fr; }
+    .project-card { border-right: none !important; }
+
+    .cta-section { padding: 64px 24px; }
+
+    footer { padding: 40px 24px 32px; }
+    .footer-top { flex-direction: column; align-items: flex-start; gap: 32px; }
+    .footer-brand { justify-content: flex-start; }
+    .footer-connect { max-width: 100%; }
+    #contact-form { grid-template-columns: 1fr; }
+    .footer-bottom { flex-direction: column; align-items: flex-start; gap: 8px; }
+  }
 </style>
 </head>
 <body>
@@ -295,6 +344,7 @@
     <li><a href="servicios.html">Qué Hacemos</a></li>
     <li><a href="portfolio.html" class="active">Portfolio</a></li>
   </ul>
+  <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menú"><span></span><span></span><span></span></button>
 </nav>
 
 <!-- HERO -->
@@ -483,6 +533,18 @@
     if (window.scrollY > window.innerHeight * 0.7) nav.classList.add('scrolled');
     else nav.classList.remove('scrolled');
   });
+
+  // Mobile nav toggle
+  const navToggle = document.getElementById('nav-toggle');
+  const navLinksEl = document.querySelector('.nav-links');
+  navToggle.addEventListener('click', () => {
+    navToggle.classList.toggle('active');
+    navLinksEl.classList.toggle('open');
+  });
+  navLinksEl.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    navToggle.classList.remove('active');
+    navLinksEl.classList.remove('open');
+  }));
 
   function submitContactForm(e) {
     e.preventDefault();

@@ -133,6 +133,24 @@
   }
   .nav-cta:hover { background: var(--primary); color: var(--on-primary); }
 
+  .nav-toggle {
+    display: none;
+    background: none; border: none; padding: 0;
+    width: 26px; height: 18px; position: relative;
+    cursor: pointer; z-index: 101;
+  }
+  .nav-toggle span {
+    position: absolute; left: 0; right: 0; height: 2px;
+    background: var(--primary); transition: transform 0.3s ease, opacity 0.3s ease, background 0.3s ease;
+  }
+  .nav-toggle span:nth-child(1) { top: 0; }
+  .nav-toggle span:nth-child(2) { top: 8px; }
+  .nav-toggle span:nth-child(3) { top: 16px; }
+  nav.scrolled .nav-toggle span { background: #141313; }
+  .nav-toggle.active span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+  .nav-toggle.active span:nth-child(2) { opacity: 0; }
+  .nav-toggle.active span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
   /* ── PAGE WRAPPER ── */
   .page {
     min-height: 100vh;
@@ -620,6 +638,53 @@
     cursor: pointer; transition: opacity 0.2s; margin-top: 4px;
   }
   .modal-submit:hover { opacity: 0.85; }
+
+  /* ══════════ MOBILE ══════════ */
+  @media (max-width: 860px) {
+    nav { padding: 16px 20px; }
+    .nav-toggle { display: block; }
+    .nav-links {
+      position: fixed; top: 0; right: 0; height: 100vh; width: min(75vw, 320px);
+      background: var(--surface-container-low);
+      flex-direction: column; align-items: flex-start; justify-content: center;
+      gap: 28px; margin-left: 0; padding: 0 40px;
+      transform: translateX(100%); transition: transform 0.4s ease;
+      box-shadow: -8px 0 24px rgba(0,0,0,0.3);
+    }
+    .nav-links.open { transform: translateX(0); }
+    .nav-links a, nav.scrolled .nav-links a { color: var(--primary) !important; font-size: 15px; }
+
+    .service-hero { height: 60vh; }
+    .service-hero-banner { padding: 24px 24px 56px; }
+
+    .page-header { padding: 40px 24px 32px; }
+
+    .services-layout { grid-template-columns: 1fr; min-height: auto; }
+
+    .sidebar {
+      position: static; height: auto; flex-direction: row; overflow-x: auto;
+      border-right: none; border-bottom: 1px solid var(--outline-variant);
+      padding: 20px 24px; gap: 20px;
+    }
+    .sidebar-label { display: none; }
+    .sidebar-item { white-space: nowrap; flex: 0 0 auto; padding: 6px 0; }
+    .sidebar-item::before { left: 0; bottom: -8px; top: auto; width: 100%; height: 2px; }
+    .sidebar-item.active { padding-left: 0; }
+    .sidebar-item.active::before { width: 100%; }
+
+    .content-col { min-height: auto; border-right: none; border-bottom: 1px solid var(--outline-variant); padding: 40px 24px; }
+
+    .image-col { position: static; height: 50vh; }
+
+    .scroll-indicator { display: none; }
+
+    footer { padding: 40px 24px 32px; }
+    .footer-top { flex-direction: column; align-items: flex-start; gap: 32px; }
+    .footer-brand { justify-content: flex-start; }
+    .footer-connect { max-width: 100%; }
+    #contact-form { grid-template-columns: 1fr; }
+    .footer-bottom { flex-direction: column; align-items: flex-start; gap: 8px; }
+  }
 </style>
 </head>
 <body>
@@ -635,6 +700,7 @@
     <li><a href="servicios.html" class="active">Qué Hacemos</a></li>
     <li><a href="portfolio.html">Portfolio</a></li>
   </ul>
+  <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menú"><span></span><span></span><span></span></button>
 </nav>
 
 <div class="page">
@@ -812,6 +878,18 @@
       nav.classList.remove('scrolled');
     }
   });
+
+  // Mobile nav toggle
+  const navToggle = document.getElementById('nav-toggle');
+  const navLinksEl = document.querySelector('.nav-links');
+  navToggle.addEventListener('click', () => {
+    navToggle.classList.toggle('active');
+    navLinksEl.classList.toggle('open');
+  });
+  navLinksEl.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    navToggle.classList.remove('active');
+    navLinksEl.classList.remove('open');
+  }));
 
   // ── Datos de servicios ──
   const services = [
