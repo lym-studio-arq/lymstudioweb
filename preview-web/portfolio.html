@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="es" data-page="portfolio">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LYM Studio — Portfolio</title>
+<meta name="description" content="Trabajos seleccionados de LYM Studio: desarrollos residenciales, comerciales y de usos múltiples. Arquitectura, visualización, brochure y branding.">
+<meta name="theme-color" content="#141313">
+<meta property="og:title" content="LYM Studio — Portfolio">
+<meta property="og:image" content="https://lym-studio.com/imagenes/general/featured.jpg">
+<link rel="icon" type="image/svg+xml" href="imagenes/general/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/lym.css">
+<script>
+  (function (h) {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var s; try { s = window.sessionStorage; } catch (e) {}
+    h.classList.add('js');
+    if (s && s.getItem('lym:transition') === '1') { h.classList.add('is-entering'); s.removeItem('lym:transition'); }
+    else if (h.dataset.page === 'index' && s && !s.getItem('lym:visited')) h.classList.add('is-preloading');
+    setTimeout(function () { if (!h.classList.contains('anim-ready')) h.classList.remove('js', 'is-entering', 'is-preloading'); }, 4000);
+  })(document.documentElement);
+</script>
+<style>
+  /* PAGE HERO */
+  .page-hero {
+    position: relative; overflow: hidden;
+    min-height: 64vh; display: flex; align-items: flex-end;
+    padding: calc(var(--nav-h) + 48px) var(--pad) 48px;
+    border-bottom: 1px solid var(--outline-variant);
+  }
+  .page-hero-media { position: absolute; inset: 0; overflow: hidden; }
+  .page-hero-bg {
+    position: absolute; inset: -12% 0;
+    background-image: url('imagenes/general/featured.jpg');
+    background-size: cover; background-position: center 30%;
+    filter: brightness(0.3);
+  }
+  .page-hero-content { position: relative; z-index: 1; width: 100%; display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; }
+  .page-hero-label { display: block; margin-bottom: 18px; }
+  .page-hero-title {
+    font-size: clamp(64px, 13vw, 210px); font-weight: 800;
+    letter-spacing: -0.065em; line-height: 0.84; color: var(--primary); margin-left: -0.04em;
+  }
+  .page-hero-title sup {
+    font-size: 0.13em; font-weight: 600; letter-spacing: 0.04em; color: var(--outline);
+    vertical-align: top; margin-left: 0.35em; position: relative; top: 1em;
+  }
+  .page-hero-aside { max-width: 320px; font-size: 14px; line-height: 1.75; color: var(--on-surface-variant); }
+
+  /* BARRA DE FILTROS */
+  .portfolio-toolbar {
+    position: sticky; top: var(--nav-h); z-index: 20;
+    display: flex; align-items: center; justify-content: space-between; gap: 24px;
+    padding: 14px var(--pad);
+    background: rgba(20,19,19,0.92); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--outline-variant);
+  }
+  .filters, .view-toggle { display: flex; gap: 6px; flex-wrap: wrap; }
+  .filter, .view-btn {
+    font-family: 'Sora', sans-serif; font-size: 10px; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--on-surface-variant); background: transparent;
+    border: 1px solid var(--outline-variant); border-radius: 9999px;
+    padding: 9px 14px; cursor: pointer;
+    transition: color 0.3s, background 0.3s, border-color 0.3s;
+  }
+  .filter sup { font-size: 8px; margin-left: 4px; color: var(--outline); }
+  .filter:hover, .view-btn:hover { border-color: var(--outline); color: var(--on-surface); }
+  .filter.active, .view-btn.active { background: var(--primary); border-color: var(--primary); color: var(--ink); }
+  .filter.active sup { color: var(--ink-variant); }
+
+  /* GRID */
+  .portfolio-grid { display: grid; grid-template-columns: repeat(2, 1fr); }
+
+  .project-card {
+    position: relative; display: block; overflow: hidden;
+    aspect-ratio: 5 / 3; text-decoration: none;
+    border-bottom: 1px solid var(--outline-variant);
+    background: var(--surface-container);
+  }
+  .project-card.col-left { border-right: 1px solid var(--outline-variant); }
+
+  .project-card-media, .project-card-zoom { position: absolute; inset: 0; overflow: hidden; }
+  .project-card-bg {
+    position: absolute; inset: 0; background-size: cover; background-position: center;
+    opacity: 0.45; transform: scale(1.02);
+    transition: transform 1.2s var(--ease-out), opacity 0.6s ease;
+  }
+  .project-card:hover .project-card-bg { transform: scale(1.07); opacity: 0.95; }
+  .project-card-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(20,19,19,0.82) 0%, transparent 58%); }
+
+  .project-card-content {
+    position: relative; z-index: 2; height: 100%;
+    padding: 28px 32px; display: flex; flex-direction: column; justify-content: flex-end;
+  }
+  .project-card-index { position: absolute; top: 28px; left: 32px; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; color: var(--on-surface-variant); }
+  .project-card-category { font-size: 10px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--outline); margin-bottom: 8px; }
+  .project-card-title {
+    font-size: clamp(26px, 3.4vw, 52px); font-weight: 800;
+    letter-spacing: -0.045em; line-height: 1; color: var(--primary);
+    transition: transform 0.8s var(--ease-out);
+  }
+  .project-card:hover .project-card-title { transform: translateX(8px); }
+  .project-card-meta {
+    display: flex; gap: 16px; margin-top: 12px;
+    font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--on-surface-variant);
+  }
+  .project-card-services {
+    display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px;
+    opacity: 0; transform: translateY(8px);
+    transition: opacity 0.4s ease 0.05s, transform 0.6s var(--ease-out) 0.05s;
+  }
+  .project-card:hover .project-card-services { opacity: 1; transform: none; }
+  .service-tag {
+    font-size: 9px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--on-surface-variant); border: 1px solid rgba(255,255,255,0.18);
+    padding: 4px 9px; border-radius: 9999px;
+  }
+  .project-card-go {
+    position: absolute; top: 24px; right: 28px;
+    width: 44px; height: 44px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid rgba(255,255,255,0.25); color: var(--primary);
+    opacity: 0; transform: translate(-6px, 6px);
+    transition: opacity 0.4s, transform 0.6s var(--ease-out), background 0.3s, color 0.3s;
+  }
+  .project-card-go svg { width: 16px; height: 16px; }
+  .project-card:hover .project-card-go { opacity: 1; transform: none; }
+
+  /* VISTA LISTA */
+  .portfolio-grid.is-list { grid-template-columns: 1fr; }
+  .is-list .project-card { aspect-ratio: auto; background: transparent; border-right: none !important; transition: background 0.4s; }
+  .is-list .project-card:hover { background: var(--surface-container-low); }
+  .is-list .project-card-media, .is-list .project-card-overlay { display: none; }
+  .is-list .project-card-content {
+    display: grid; align-items: center; gap: 24px;
+    grid-template-columns: 64px minmax(0, 2.2fr) minmax(0, 1.5fr) minmax(0, 2.2fr) 56px 44px;
+    grid-template-areas: "idx title cat services year go";
+    padding: 26px var(--pad);
+  }
+  .is-list .project-card-index { position: static; grid-area: idx; }
+  .is-list .project-card-title { grid-area: title; font-size: clamp(24px, 2.8vw, 42px); }
+  .is-list .project-card-category { grid-area: cat; margin: 0; }
+  .is-list .project-card-services { grid-area: services; opacity: 1; transform: none; margin: 0; }
+  .is-list .project-card-meta { grid-area: year; margin: 0; justify-content: flex-end; }
+  .is-list .project-card-go { position: static; grid-area: go; opacity: 1; transform: none; }
+  .is-list .project-card:hover .project-card-go { background: var(--primary); color: var(--ink); border-color: var(--primary); }
+  .is-list .project-card:hover .project-card-title { transform: translateX(14px); }
+
+  .list-preview {
+    position: fixed; top: 0; left: 0; z-index: 50; pointer-events: none;
+    width: 340px; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 2px;
+    opacity: 0; clip-path: inset(12% 12% 12% 12%);
+    transition: opacity 0.35s ease, clip-path 0.7s var(--ease-out);
+  }
+  .list-preview.is-visible { opacity: 1; clip-path: inset(0 0 0 0); }
+  .list-preview-img {
+    position: absolute; inset: 0; background-size: cover; background-position: center;
+    transform: scale(1.25); transition: transform 0.9s var(--ease-out);
+  }
+  .list-preview.is-visible .list-preview-img { transform: scale(1); }
+
+  .portfolio-empty { padding: 80px var(--pad); color: var(--on-surface-variant); font-size: 14px; }
+
+  /* CTA SECTION */
+  .cta-section {
+    padding: clamp(96px, 13vw, 180px) var(--pad);
+    display: flex; flex-direction: column; align-items: center; gap: 36px; text-align: center;
+  }
+  .cta-title {
+    font-size: clamp(40px, 7.4vw, 120px); font-weight: 800;
+    letter-spacing: -0.055em; line-height: 0.95; color: var(--primary); max-width: 12ch;
+  }
+
+  /* ══════════ MOBILE ══════════ */
+  @media (max-width: 860px) {
+    .page-hero { min-height: 52vh; padding: calc(var(--nav-h) + 32px) 24px 32px; }
+    .page-hero-content { flex-direction: column; align-items: flex-start; gap: 20px; }
+
+    .portfolio-toolbar { padding: 10px 24px; flex-wrap: nowrap; }
+    .filters { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-right: -24px; padding-right: 24px; }
+    .filters::-webkit-scrollbar { display: none; }
+    .filter { white-space: nowrap; }
+    .view-toggle { display: none; }
+
+    .portfolio-grid, .portfolio-grid.is-list { grid-template-columns: 1fr; }
+    .project-card { border-right: none !important; aspect-ratio: 4 / 3; }
+    .project-card-content { padding: 24px; }
+    .project-card-index { top: 24px; left: 24px; }
+    .project-card-services { opacity: 1; transform: none; }
+    .project-card-bg { opacity: 0.7; }
+
+    .cta-section { padding: 96px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Saltar al contenido</a>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
+<div class="curtain" aria-hidden="true"><img src="imagenes/general/iso-logo.svg" alt=""></div>
+
+<nav aria-label="Principal">
+  <a href="index.html" class="nav-logo" aria-label="LYM Studio — inicio"><img src="imagenes/general/lymstudio-logo.svg" alt="LYM Studio" class="nav-logo-img"></a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="index.html"><span class="nav-num">01</span>El Estudio</a></li>
+    <li><a href="servicios.html"><span class="nav-num">02</span>Qué Hacemos</a></li>
+    <li><a href="portfolio.html" class="active" aria-current="page"><span class="nav-num">03</span>Portfolio</a></li>
+    <li class="nav-mobile-only">
+      <a class="nav-mobile-mail" href="mailto:info@lym-studio.com">info@lym-studio.com</a>
+      <div class="nav-mobile-social">
+        <a href="https://www.instagram.com/lymstudio.ar/" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://www.behance.net/lymstudio" target="_blank" rel="noopener">Behance</a>
+        <a href="https://www.linkedin.com/company/lymstudio" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </li>
+  </ul>
+  <a href="#contacto" class="nav-cta">Contacto<span class="nav-cta-dot"></span></a>
+  <button class="nav-toggle" id="nav-toggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav-links"><span></span><span></span><span></span></button>
+</nav>
+
+<main id="main">
+
+<!-- HERO -->
+<div class="page-hero" data-hero>
+  <div class="page-hero-media"><div class="page-hero-bg" data-intro="img" data-parallax="8"></div></div>
+  <div class="page-hero-content">
+    <div>
+      <span class="label page-hero-label" data-intro>Trabajos seleccionados</span>
+      <h1 class="page-hero-title" data-intro="split">Clientes.<sup id="portfolio-count">(06)</sup></h1>
+    </div>
+    <p class="page-hero-aside" data-intro>Desarrollos residenciales, comerciales y de usos múltiples. Cada proyecto, contado de punta a punta.</p>
+  </div>
+</div>
+
+<section class="portfolio-section" aria-label="Proyectos">
+
+<!-- FILTROS -->
+<div class="portfolio-toolbar">
+  <div class="filters" role="group" aria-label="Filtrar por servicio">
+    <button class="filter active" type="button" data-filter="all" aria-pressed="true">Todos</button>
+    <button class="filter" type="button" data-filter="arquitectura" aria-pressed="false">Arquitectura</button>
+    <button class="filter" type="button" data-filter="visualizaciones" aria-pressed="false">Visualizaciones</button>
+    <button class="filter" type="button" data-filter="branding" aria-pressed="false">Branding</button>
+    <button class="filter" type="button" data-filter="diseño" aria-pressed="false">Diseño</button>
+  </div>
+  <div class="view-toggle" role="group" aria-label="Vista">
+    <button class="view-btn active" type="button" data-view="grid" aria-pressed="true">Grilla</button>
+    <button class="view-btn" type="button" data-view="list" aria-pressed="false">Lista</button>
+  </div>
+</div>
+
+<!-- GRID -->
+<div class="portfolio-grid" id="portfolio-grid">
+
+  <a href="proyecto.html?id=trelles" class="project-card" data-tags="branding,arquitectura,visualizaciones" data-cursor="Ver">
+    <div class="project-card-media" data-reveal-img><div class="project-card-zoom"><div class="project-card-bg" style="background-image: url('imagenes/thumbnails/trelles.jpg');"></div></div></div>
+    <div class="project-card-overlay"></div>
+    <div class="project-card-content">
+      <span class="project-card-index">(01)</span>
+      <span class="project-card-category">Residencial · Buenos Aires</span>
+      <h2 class="project-card-title">Trelles</h2>
+      <div class="project-card-meta"><span>2025</span></div>
+      <div class="project-card-services">
+        <span class="service-tag">Branding</span>
+        <span class="service-tag">Arquitectura</span>
+        <span class="service-tag">Visualizaciones</span>
+      </div>
+      <span class="project-card-go"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 17L17 7M17 7H8M17 7V16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+  </a>
+
+  <a href="proyecto.html?id=canaveral" class="project-card" data-tags="branding,visualizaciones" data-cursor="Ver">
+    <div class="project-card-media" data-reveal-img><div class="project-card-zoom"><div class="project-card-bg" style="background-image: url('imagenes/thumbnails/cañaveral.png');"></div></div></div>
+    <div class="project-card-overlay"></div>
+    <div class="project-card-content">
+      <span class="project-card-index">(02)</span>
+      <span class="project-card-category">Residencial · San Juan</span>
+      <h2 class="project-card-title">Cañaveral I</h2>
+      <div class="project-card-meta"><span>2025</span></div>
+      <div class="project-card-services">
+        <span class="service-tag">Branding</span>
+        <span class="service-tag">Visualizaciones</span>
+      </div>
+      <span class="project-card-go"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 17L17 7M17 7H8M17 7V16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+  </a>
+
+  <a href="proyecto.html?id=atlikum" class="project-card" data-tags="arquitectura,visualizaciones" data-cursor="Ver">
+    <div class="project-card-media" data-reveal-img><div class="project-card-zoom"><div class="project-card-bg" style="background-image: url('imagenes/thumbnails/atlikum.jpg');"></div></div></div>
+    <div class="project-card-overlay"></div>
+    <div class="project-card-content">
+      <span class="project-card-index">(03)</span>
+      <span class="project-card-category">Residencial · Buenos Aires</span>
+      <h2 class="project-card-title">Atlikum</h2>
+      <div class="project-card-meta"><span>2023</span></div>
+      <div class="project-card-services">
+        <span class="service-tag">Arquitectura</span>
+        <span class="service-tag">Visualizaciones</span>
+      </div>
+      <span class="project-card-go"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 17L17 7M17 7H8M17 7V16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+  </a>
+
+  <a href="proyecto.html?id=olofpalme" class="project-card" data-tags="branding,arquitectura,visualizaciones" data-cursor="Ver">
+    <div class="project-card-media" data-reveal-img><div class="project-card-zoom"><div class="project-card-bg" style="background-image: url('imagenes/thumbnails/olofpalme.jpg');"></div></div></div>
+    <div class="project-card-overlay"></div>
+    <div class="project-card-content">
+      <span class="project-card-index">(04)</span>
+      <span class="project-card-category">Residencial · Buenos Aires</span>
+      <h2 class="project-card-title">Olof Palme</h2>
+      <div class="project-card-meta"><span>2025</span></div>
+      <div class="project-card-services">
+        <span class="service-tag">Branding</span>
+        <span class="service-tag">Arquitectura</span>
+        <span class="service-tag">Visualizaciones</span>
+      </div>
+      <span class="project-card-go"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 17L17 7M17 7H8M17 7V16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+  </a>
+
+  <a href="proyecto.html?id=elcazal" class="project-card" data-tags="branding,visualizaciones" data-cursor="Ver">
+    <div class="project-card-media" data-reveal-img><div class="project-card-zoom"><div class="project-card-bg" style="background-image: url('imagenes/thumbnails/cazal.jpg');"></div></div></div>
+    <div class="project-card-overlay"></div>
+    <div class="project-card-content">
+      <span class="project-card-index">(05)</span>
+      <span class="project-card-category">Usos Múltiples · Buenos Aires</span>
+      <h2 class="project-card-title">El Cazal</h2>
+      <div class="project-card-meta"><span>2024</span></div>
+      <div class="project-card-services">
+        <span class="service-tag">Branding</span>
+        <span class="service-tag">Visualizaciones</span>
+      </div>
+      <span class="project-card-go"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 17L17 7M17 7H8M17 7V16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+  </a>
+
+  <a href="proyecto.html?id=honda" class="project-card" data-tags="branding,diseño" data-cursor="Ver">
+    <div class="project-card-media" data-reveal-img><div class="project-card-zoom"><div class="project-card-bg" style="background-image: url('imagenes/thumbnails/honda.png');"></div></div></div>
+    <div class="project-card-overlay"></div>
+    <div class="project-card-content">
+      <span class="project-card-index">(06)</span>
+      <span class="project-card-category">Comercial · Buenos Aires</span>
+      <h2 class="project-card-title">Honda</h2>
+      <div class="project-card-meta"><span>2024</span></div>
+      <div class="project-card-services">
+        <span class="service-tag">Branding</span>
+        <span class="service-tag">Diseño</span>
+      </div>
+      <span class="project-card-go"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 17L17 7M17 7H8M17 7V16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+  </a>
+
+</div>
+
+</section>
+
+<div class="list-preview" id="list-preview" aria-hidden="true"><div class="list-preview-img"></div></div>
+
+<!-- CTA -->
+<section class="cta-section">
+  <span class="label" data-reveal>¿Tenés un proyecto?</span>
+  <p class="cta-title" data-split>Desafianos a ir más allá.</p>
+  <a href="#contact-form" class="btn" data-magnetic="0.25" data-reveal>
+    <span class="roll"><span data-text="Ponerse en contacto">Ponerse en contacto</span></span>
+  </a>
+</section>
+
+</main>
+
+<!-- FOOTER -->
+<footer id="contacto">
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div>
+        <span class="label" data-reveal>Contacto</span>
+        <h2 class="footer-title" data-split>¿Tenés un proyecto? Hablemos.</h2>
+        <a href="mailto:info@lym-studio.com" class="footer-mail" data-reveal>info@lym-studio.com</a>
+      </div>
+      <div class="footer-info" data-reveal>
+        <div class="footer-info-group">
+          <span class="label">Estudio</span>
+          <span class="footer-info-value">Buenos Aires, Argentina</span>
+          <span class="footer-info-value" data-clock></span>
+        </div>
+        <div class="footer-info-group">
+          <span class="label">Redes</span>
+          <a href="https://www.instagram.com/lymstudio.ar/" target="_blank" rel="noopener" class="footer-social-link">Instagram</a>
+          <a href="https://www.behance.net/lymstudio" target="_blank" rel="noopener" class="footer-social-link">Behance</a>
+          <a href="https://www.linkedin.com/company/lymstudio" target="_blank" rel="noopener" class="footer-social-link">LinkedIn</a>
+        </div>
+        <div class="footer-info-group">
+          <span class="label">Sitio</span>
+          <a href="index.html" class="footer-social-link">El Estudio</a>
+          <a href="servicios.html" class="footer-social-link">Qué Hacemos</a>
+          <a href="portfolio.html" class="footer-social-link">Portfolio</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-connect" data-reveal>
+      <p class="footer-connect-label">Ponerse en contacto</p>
+      <form id="contact-form" class="form-grid" name="contact" method="POST" data-netlify="true" data-success="contact-success" data-reset-after="6000">
+        <input type="hidden" name="form-name" value="contact">
+        <div class="modal-field">
+          <label class="modal-label" for="c-nombre">Nombre</label>
+          <input class="modal-input" id="c-nombre" name="name" type="text" placeholder="Tu nombre" required>
+        </div>
+        <div class="modal-field">
+          <label class="modal-label" for="c-mail">Mail</label>
+          <input class="modal-input" id="c-mail" name="email" type="email" placeholder="tu@mail.com" required>
+        </div>
+        <div class="modal-field modal-field-full">
+          <label class="modal-label" for="c-mensaje">Mensaje</label>
+          <textarea class="modal-textarea" id="c-mensaje" name="message" placeholder="Contanos sobre tu proyecto..." required></textarea>
+        </div>
+        <p class="form-error" hidden>Hubo un error al enviar el mensaje. Por favor, intentá de nuevo o escribinos a <a href="mailto:info@lym-studio.com">info@lym-studio.com</a>.</p>
+        <button class="btn modal-submit" type="submit"><span class="btn-idle">Enviar mensaje</span><span class="btn-sending">Enviando…</span></button>
+      </form>
+      <div class="form-success" id="contact-success" hidden>
+        <p class="form-success-title">¡Gracias! Tu mensaje fue enviado correctamente.</p>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2025 LYM Studio. All Rights Reserved. — Web diseñada y desarrollada por LYM Studio.</span>
+    <button class="footer-top-btn" type="button" data-top>Volver arriba <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 19V5M12 5l-6 6M12 5l6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  </div>
+  <div class="footer-wordmark" data-reveal-img data-reveal-start="top bottom"><img src="imagenes/general/lymstudio-logo.svg" alt="" aria-hidden="true"></div>
+</footer>
+
+<script src="assets/vendor/gsap.min.js"></script>
+<script src="assets/vendor/ScrollTrigger.min.js"></script>
+<script src="assets/vendor/SplitText.min.js"></script>
+<script src="assets/vendor/lenis.min.js"></script>
+<script src="assets/js/lym.js"></script>
+<script>
+  const grid = document.getElementById('portfolio-grid');
+  const cards = Array.from(grid.querySelectorAll('.project-card'));
+  const filterBtns = document.querySelectorAll('.filter');
+  const viewBtns = document.querySelectorAll('.view-btn');
+  const tagsOf = card => card.dataset.tags.split(',');
+  const pad = n => String(n).padStart(2, '0');
+
+  // Cantidad de proyectos por filtro (se calcula de data-tags)
+  document.getElementById('portfolio-count').textContent = `(${pad(cards.length)})`;
+  filterBtns.forEach(btn => {
+    const f = btn.dataset.filter;
+    const n = f === 'all' ? cards.length : cards.filter(c => tagsOf(c).includes(f)).length;
+    btn.insertAdjacentHTML('beforeend', `<sup>${pad(n)}</sup>`);
+  });
+
+  // Borde derecho solo en la columna izquierda visible
+  function updateColumns() {
+    cards.filter(c => !c.hidden).forEach((c, i) => c.classList.toggle('col-left', i % 2 === 0));
+  }
+
+  function showCards(filter) {
+    cards.forEach(c => { c.hidden = filter !== 'all' && !tagsOf(c).includes(filter); });
+    updateColumns();
+  }
+
+  function setFilter(filter, animate) {
+    if (![...filterBtns].some(b => b.dataset.filter === filter)) filter = 'all';
+    filterBtns.forEach(b => {
+      const on = b.dataset.filter === filter;
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-pressed', String(on));
+    });
+    const url = new URL(window.location.href);
+    if (filter === 'all') url.searchParams.delete('filter'); else url.searchParams.set('filter', filter);
+    history.replaceState(null, '', url);
+
+    if (!animate || !LYM.animated) { showCards(filter); LYM.refresh(); return; }
+    gsap.to(grid, {
+      autoAlpha: 0, y: 16, duration: 0.3, ease: 'power2.in',
+      onComplete: () => {
+        showCards(filter);
+        ScrollTrigger.refresh();
+        gsap.to(grid, { autoAlpha: 1, y: 0, duration: 0.8, ease: 'expo.out' });
+      }
+    });
+  }
+
+  filterBtns.forEach(btn => btn.addEventListener('click', () => setFilter(btn.dataset.filter, true)));
+  setFilter(new URLSearchParams(window.location.search).get('filter') || 'all', false);
+
+  // Vista grilla / lista (se recuerda entre visitas)
+  function setView(view, animate) {
+    viewBtns.forEach(b => {
+      const on = b.dataset.view === view;
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-pressed', String(on));
+    });
+    const apply = () => { grid.classList.toggle('is-list', view === 'list'); LYM.refresh(); };
+    try { localStorage.setItem('lym:portfolio-view', view); } catch (e) {}
+    if (!animate || !LYM.animated) return apply();
+    gsap.to(grid, { autoAlpha: 0, duration: 0.25, onComplete: () => { apply(); gsap.to(grid, { autoAlpha: 1, duration: 0.6 }); } });
+  }
+  viewBtns.forEach(btn => btn.addEventListener('click', () => setView(btn.dataset.view, true)));
+  let savedView = 'grid';
+  try { savedView = localStorage.getItem('lym:portfolio-view') || 'grid'; } catch (e) {}
+  setView(savedView, false);
+
+  // Vista lista — preview de la imagen que sigue al cursor
+  const preview = document.getElementById('list-preview');
+  const previewImg = preview.querySelector('.list-preview-img');
+  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches && window.gsap) {
+    const xTo = gsap.quickTo(preview, 'x', { duration: 0.6, ease: 'power3.out' });
+    const yTo = gsap.quickTo(preview, 'y', { duration: 0.6, ease: 'power3.out' });
+    grid.addEventListener('mousemove', e => { xTo(e.clientX + 32); yTo(e.clientY - preview.offsetHeight / 2); });
+    cards.forEach(card => {
+      card.addEventListener('mouseenter', () => {
+        if (!grid.classList.contains('is-list')) return;
+        previewImg.style.backgroundImage = card.querySelector('.project-card-bg').style.backgroundImage;
+        preview.classList.add('is-visible');
+      });
+      card.addEventListener('mouseleave', () => preview.classList.remove('is-visible'));
+    });
+  }
+</script>
+
+</body>
+</html>
