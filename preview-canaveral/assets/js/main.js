@@ -222,7 +222,7 @@
     const tl = gsap.timeline({
       defaults: { ease: 'none' },
       scrollTrigger: {
-        trigger: hero, start: 'top top', end: 'bottom bottom', scrub: 0.6,
+        trigger: hero, start: 'top top', end: 'bottom bottom', scrub: true,
         onUpdate: (self) => { heroProgress = self.progress; },
       },
     });
@@ -232,8 +232,9 @@
       .to('.hero .facts', { yPercent: 100, duration: 0.25, ease: 'power2.in' }, 0.32)
       .to('.hero__title', { y: -60, autoAlpha: 0, duration: 0.25, ease: 'power2.in' }, 0.38)
       .to('.hero .hotspots', { autoAlpha: 0, duration: 0.15 }, 0.36)
-      .fromTo(cover, { '--zoom': 1 }, { '--zoom': 1.7, duration: 0.58, ease: 'power2.in', immediateRender: false }, 0.42)
-      .to('.hero__fog', { opacity: 1, duration: 0.4, ease: 'power1.in' }, 0.6);
+      .fromTo(cover, { '--zoom': 1 }, { '--zoom': 1.7, duration: 0.5, ease: 'power2.in', immediateRender: false }, 0.42)
+      .to('.hero__fog', { opacity: 1, duration: 0.3, ease: 'power1.in' }, 0.56)
+      .to({}, { duration: 0.08 });
   }
 
   /* ------------------------------------------------------------------------
@@ -414,7 +415,7 @@
 
     gsap.timeline({
       defaults: { ease: 'none' },
-      scrollTrigger: { trigger: sec, start: 'top 70%', end: 'bottom bottom', scrub: 0.6 },
+      scrollTrigger: { trigger: sec, start: 'top 70%', end: 'bottom bottom', scrub: true },
     })
       .fromTo(frame, { '--ct': '22%', '--cb': '22%', '--cl': '26%', '--cr': '26%', '--crad': '22px' }, { '--ct': '0%', '--cb': '0%', '--cl': '0%', '--cr': '0%', '--crad': '0px', duration: 0.45, ease: 'power2.inOut' }, 0)
       .fromTo(cover, { '--zoom': 1.3 }, { '--zoom': 1.02, duration: 0.6, ease: 'power1.out' }, 0)
@@ -520,7 +521,7 @@
     } else {
       draw(0);
       ScrollTrigger.create({
-        trigger: '.sate__track', start: 'top top', end: 'bottom bottom', scrub: 0.5,
+        trigger: '.sate__track', start: 'top top', end: 'bottom bottom', scrub: true,
         onUpdate: (self) => draw(clamp(self.progress / 0.75, 0, 1)),
       });
     }
@@ -535,31 +536,88 @@
      Índices de capítulo (págs. 5, 6, 9, 16)
      ------------------------------------------------------------------------ */
   function setupIndexes() {
+    const rollEase = gsap.parseEase('power3.inOut');
+    const inEase = gsap.parseEase('power2.out');
+    const openEase = gsap.parseEase('sine.inOut');
+    const outEase = gsap.parseEase('power2.in');
+    const clear = (c) => !c || c === 'transparent' || /rgba\(.*,\s*0\)$/.test(c);
+    // Primer fondo opaco de la sección siguiente (puede estar en un hijo)
+    const bgOf = (el) => {
+      for (let n = el; n; n = n.firstElementChild) {
+        const c = getComputedStyle(n).backgroundColor;
+        if (!clear(c)) return c;
+      }
+      return getComputedStyle(document.body).backgroundColor;
+    };
+    const themeOf = (el) => {
+      for (let n = el; n; n = n.firstElementChild) if (n.dataset && n.dataset.theme) return n.dataset.theme;
+      return 'light';
+    };
+
     $$('.index').forEach((idx) => {
       const k = +idx.dataset.index - 1;
+      const sticky = $('.index__sticky', idx);
+      const stage = $('.index__stage', idx);
       const list = $('.index__list', idx);
       const items = $$('li', list);
       const spark = $('.index__spark', idx);
-      let centers = [];
+      const next = idx.nextElementSibling;
+      const theme0 = idx.dataset.theme;
+      const theme1 = themeOf(next);
+      let mix = null;
+      let centers = [], step = 1;
       const measure = () => {
         centers = items.map((li) => li.offsetTop + li.offsetHeight / 2);
+        step = centers[1] - centers[0];
+        const inline = sticky.style.backgroundColor;
+        sticky.style.backgroundColor = '';
+        mix = gsap.utils.interpolate(getComputedStyle(sticky).backgroundColor, bgOf(next));
+        sticky.style.backgroundColor = inline;
+        // Los márgenes de la lámina al entrar muestran el color de la sección anterior
+        idx.style.backgroundColor = bgOf(idx.previousElementSibling);
       };
+      const centerAt = (f) => centers[0] + f * step;
+
+      // p: 0 cuando la sección asoma, 1 cuando termina el tramo fijo
+      const apply = (p, E) => {
+        const e = clamp(p / E, 0, 1);
+        const enter = inEase(e);
+        const open = openEase(e);
+        const q = clamp((p - E) / (1 - E), 0, 1);
+        const roll = rollEase(clamp(q / 0.5, 0, 1));
+        const out = clamp((q - 0.66) / 0.34, 0, 1);
+        const outE = outEase(out);
+
+        // Entra como una lámina que se abre hasta el borde
+        sticky.style.clipPath = open < 1 ? `inset(0 ${((1 - open) * 5).toFixed(2)}% 0 ${((1 - open) * 5).toFixed(2)}% round ${((1 - open) * 32).toFixed(1)}px)` : '';
+        stage.style.transform = `translate3d(0, ${((1 - enter) * 14 - outE * 10).toFixed(2)}vh, 0)`;
+        stage.style.opacity = (1 - outE).toFixed(3);
+
+        // La lista pasa del capítulo anterior al actual; la opacidad sigue la distancia al centro
+        const f = k - 1 + roll;
+        list.style.transform = `translate3d(0, ${(-centerAt(f)).toFixed(1)}px, 0)`;
+        items.forEach((li, i) => { li.style.opacity = (0.13 + 0.87 * clamp(1 - Math.abs(i - f), 0, 1)).toFixed(3); });
+        spark.style.transform = `rotate(${(k * 90 + roll * 90 + outE * 30).toFixed(1)}deg) scale(${(1 - outE * 0.25).toFixed(3)})`;
+
+        // Al salir toma el color de la sección siguiente: el corte desaparece
+        const c = clamp((q - 0.6) / 0.4, 0, 1);
+        sticky.style.backgroundColor = c > 0 ? mix(gsap.parseEase('power1.inOut')(c)) : '';
+        const theme = c > 0.55 ? theme1 : theme0;
+        if (idx.dataset.theme !== theme) idx.dataset.theme = theme;
+      };
+
       measure();
-      const centerOf = (i) => (i >= 0 ? centers[i] : centers[0] - (centers[1] - centers[0]));
-      const apply = (p) => {
-        const e = gsap.parseEase('power3.inOut')(p);
-        const y = -lerp(centerOf(k - 1), centerOf(k), e);
-        list.style.transform = `translate3d(0, ${y.toFixed(1)}px, 0)`;
-        const active = p > 0.45 ? k : k - 1;
-        items.forEach((li, i) => li.classList.toggle('is-active', i === active));
-        spark.style.transform = `rotate(${(k * 90 + e * 90).toFixed(1)}deg)`;
-      };
-      if (REDUCED) { apply(1); return; }
-      apply(0);
+      if (REDUCED) {
+        list.style.transform = `translate3d(0, ${(-centerAt(k)).toFixed(1)}px, 0)`;
+        items.forEach((li, i) => li.classList.toggle('is-active', i === k));
+        return;
+      }
+      let E = 0.4;
+      apply(0, E);
       ScrollTrigger.create({
-        trigger: idx, start: 'top 65%', end: 'top top', scrub: 0.4,
-        onRefresh: (self) => { measure(); apply(self.progress); },
-        onUpdate: (self) => apply(self.progress),
+        trigger: idx, start: 'top bottom', end: 'bottom bottom', scrub: true,
+        onRefresh: (self) => { measure(); E = innerHeight / Math.max(1, self.end - self.start); apply(self.progress, E); },
+        onUpdate: (self) => apply(self.progress, E),
       });
     });
   }
@@ -628,11 +686,15 @@
     });
 
     // Cámara
+    const deck = $('.geo__deck', sec);
+    const progressEl = $('.geo__progress', sec);
     let vw = 0, vh = 0, Lw = 0, Lh = 0;
     const cam = { s: 1, cx: home.x, cy: home.y };
-    const area = () => (isDesktop()
-      ? { x0: 0, x1: vw - Math.min(440, vw * 0.36) - 60, y0: vh * 0.16, y1: vh * 0.86 }
-      : { x0: 0, x1: vw, y0: vh * 0.1, y1: vh * 0.42 });
+    const area = () => {
+      if (isDesktop()) return { x0: 0, x1: vw - Math.min(440, vw * 0.36) - 60, y0: vh * 0.16, y1: vh * 0.84 };
+      const top = deck ? deck.offsetTop : vh * 0.6;
+      return { x0: 0, x1: vw, y0: vh * 0.14, y1: Math.max(vh * 0.4, top - 24) };
+    };
 
     function place(el, x, y, tx, ty) {
       el.style.transform = `translate3d(${(tx + x * Lw * cam.s).toFixed(1)}px, ${(ty + y * Lh * cam.s).toFixed(1)}px, 0)`;
@@ -663,7 +725,6 @@
       Lw = Math.max(vw, vh * AR); Lh = Lw / AR;
       layer.style.width = Lw + 'px';
       layer.style.height = Lh + 'px';
-      apply();
     }
 
     function target(cat) {
@@ -672,40 +733,69 @@
       const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
       const a = area();
       const bw = Math.max(x1 - x0, 0.02) * Lw, bh = Math.max(y1 - y0, 0.02) * Lh;
-      const s = clamp(Math.min(((a.x1 - a.x0) * 0.8) / bw, ((a.y1 - a.y0) * 0.8) / bh), isDesktop() ? 0.7 : 0.26, 3);
+      const s = clamp(Math.min(((a.x1 - a.x0) * 0.72) / bw, ((a.y1 - a.y0) * 0.72) / bh), isDesktop() ? 0.7 : 0.26, 3);
       return { s, cx: (x0 + x1) / 2, cy: (y0 + y1) / 2 };
     }
 
-    let current = null;
-    function setCat(cat, instant) {
-      if (cat === current) return;
-      current = cat;
+    // Una parada por tarjeta: la cámara se queda quieta un tramo y después vuela a la siguiente
+    const cats = cards.map((c) => c.dataset.cat);
+    let stops = [];
+    let current = -1;
+    let lastP = 0;
+    const flyEase = gsap.parseEase('power2.inOut');
+    const HOLD = 0.42;
+
+    function setCat(i) {
+      if (i === current) return;
+      current = i;
+      const cat = cats[i];
       sec.classList.toggle('is-all', cat === 'all');
       sec.classList.toggle('has-cat', cat !== 'all');
       pois.forEach((p) => p.el.classList.toggle('is-on', p.cat === cat));
-      cards.forEach((c) => c.classList.toggle('is-on', c.dataset.cat === cat));
-      const t = target(cat);
-      gsap.to(cam, { ...t, duration: instant || REDUCED ? 0 : 1.6, ease: 'power3.inOut', onUpdate: apply, overwrite: true });
+      cards.forEach((c, k) => {
+        c.classList.toggle('is-on', k === i);
+        c.classList.toggle('is-past', k < i);
+        c.setAttribute('aria-current', k === i ? 'true' : 'false');
+      });
     }
 
-    layout();
-    Object.assign(cam, target('all'));
-    apply();
-    setCat('all', true);
-    addEventListener('resize', () => { layout(); const t = target(current || 'all'); Object.assign(cam, t); apply(); });
+    function update(p) {
+      lastP = p;
+      const n = stops.length;
+      const u = clamp((p - 0.04) / 0.9, 0, 1) * (n - 1);
+      const seg = Math.min(n - 2, Math.floor(u));
+      const m = flyEase(clamp((u - seg - HOLD) / (1 - HOLD), 0, 1));
+      const A = stops[seg], B = stops[seg + 1];
+      // Zoom geométrico y un leve alejamiento a mitad de vuelo cuando el salto es largo
+      const jump = Math.hypot((B.cx - A.cx) * Lw, (B.cy - A.cy) * Lh) * Math.min(A.s, B.s) / Math.max(vw, 1);
+      const dip = 1 - clamp(jump * 0.55, 0, 0.3) * Math.sin(Math.PI * m);
+      cam.s = A.s * Math.pow(B.s / A.s, m) * dip;
+      cam.cx = lerp(A.cx, B.cx, m);
+      cam.cy = lerp(A.cy, B.cy, m);
+      apply();
+      setCat(m > 0.3 ? seg + 1 : seg);
+      progressEl.style.setProperty('--gp', (u / (n - 1)).toFixed(4));
+    }
 
-    const [st0, st1] = isDesktop() ? ['top 64%', 'bottom 36%'] : ['top 86%', 'top 44%'];
-    cards.forEach((c) => {
-      ScrollTrigger.create({ trigger: c, start: st0, end: st1, onToggle: (st) => { if (st.isActive) setCat(c.dataset.cat); } });
-      c.addEventListener('pointerenter', () => setCat(c.dataset.cat));
+    function rebuild() {
+      layout();
+      stops = cats.map(target);
+      update(lastP);
+    }
+    rebuild();
+    addEventListener('resize', rebuild);
+
+    ScrollTrigger.create({
+      trigger: sec, start: 'top top', end: 'bottom bottom', scrub: true,
+      onRefresh: (self) => { rebuild(); update(self.progress); },
+      onUpdate: (self) => update(self.progress),
     });
-    ScrollTrigger.create({ trigger: cards[0], start: st0, onLeaveBack: () => setCat('all') });
-    ScrollTrigger.create({ trigger: sec, start: 'top bottom', end: 'top top', onLeaveBack: () => setCat('all') });
 
     if (!REDUCED) {
-      gsap.from(cards, { y: 60, autoAlpha: 0, duration: 1, ease: 'power3.out', stagger: 0.1, scrollTrigger: { trigger: '.geo__cards', start: 'top 80%', once: true } });
-      gsap.from('.geo__hud > *', { autoAlpha: 0, y: 10, duration: 0.8, stagger: 0.08, scrollTrigger: { trigger: sec, start: 'top 60%', once: true } });
-      gsap.from(homeEl, { scale: 0, duration: 1, ease: 'back.out(2)', scrollTrigger: { trigger: sec, start: 'top 55%', once: true } });
+      gsap.fromTo(view, { autoAlpha: 0.3, scale: 1.08 }, { autoAlpha: 1, scale: 1, ease: 'none', scrollTrigger: { trigger: sec, start: 'top bottom', end: 'top 35%', scrub: true } });
+      gsap.from(deck, { y: 50, autoAlpha: 0, duration: 1.1, ease: 'power3.out', scrollTrigger: { trigger: sec, start: 'top 35%', once: true } });
+      gsap.from('.geo__hud > *', { autoAlpha: 0, y: 10, duration: 0.8, stagger: 0.08, scrollTrigger: { trigger: sec, start: 'top 40%', once: true } });
+      gsap.from(homeEl, { scale: 0, duration: 1, ease: 'back.out(2)', scrollTrigger: { trigger: sec, start: 'top 40%', once: true } });
     }
   }
 
@@ -738,7 +828,7 @@
     if (REDUCED) { gsap.set(cover, { '--zoom': 1 }); return; }
     const tl = gsap.timeline({
       defaults: { ease: 'none' },
-      scrollTrigger: { trigger: sec, start: 'top top', end: 'bottom bottom', scrub: 0.6 },
+      scrollTrigger: { trigger: sec, start: 'top top', end: 'bottom bottom', scrub: true },
     });
     tl.fromTo(win, { '--ct': '16%', '--cb': '16%', '--cl': '24%', '--cr': '24%', '--crad': '18px' }, { '--ct': '0%', '--cb': '0%', '--cl': '0%', '--cr': '0%', '--crad': '0px', duration: 0.45, ease: 'power2.inOut' }, 0)
       .fromTo(cover, { '--zoom': 1.25 }, { '--zoom': 1, duration: 0.6 }, 0)
@@ -762,11 +852,11 @@
       if (!REDUCED) {
         gsap.set(img, { clipPath: 'inset(0 100% 0 0)' });
         ScrollTrigger.create({
-          trigger: fig, start: 'top 75%', once: true,
+          trigger: fig, start: 'top 80%', once: true,
           onEnter: () => {
             const o = { p: 0 };
             gsap.timeline()
-              .to(o, { p: 1, duration: 1.7, ease: 'power2.inOut', onUpdate: () => {
+              .to(o, { p: 1, duration: 1.3, ease: 'power3.inOut', onUpdate: () => {
                 img.style.clipPath = `inset(0 ${(100 - o.p * 100).toFixed(2)}% 0 0)`;
               } })
               .from(corners, { scale: 0, duration: 0.6, ease: 'back.out(2)', stagger: 0.05 }, 0.2);
@@ -807,7 +897,7 @@
       if (REDUCED) return;
       gsap.timeline({
         defaults: { ease: 'none' },
-        scrollTrigger: { trigger: fig, start: 'top bottom', end: 'bottom bottom', scrub: 0.6 },
+        scrollTrigger: { trigger: fig, start: 'top bottom', end: 'bottom bottom', scrub: true },
       })
         .fromTo(win, { '--ct': '18%', '--cb': '18%', '--cl': '22%', '--cr': '22%', '--crad': '18px' }, { '--ct': '0%', '--cb': '0%', '--cl': '0%', '--cr': '0%', '--crad': '0px', duration: 0.7, ease: 'power2.inOut' }, 0.15)
         .fromTo(img, { '--zoom': 1.22 }, { '--zoom': 1, duration: 0.85 }, 0.15)

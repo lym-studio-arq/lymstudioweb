@@ -284,8 +284,10 @@
        ============================================================ -->
   <section class="index" data-index="1" data-theme="sage" data-sec="01" aria-hidden="true">
     <div class="index__sticky">
-      <svg class="index__spark" fill="currentColor"><use href="#sparkle"/></svg>
-      <ol class="index__list"><li><sup>1</sup>Ubicación</li><li><sup>2</sup>El proyecto</li><li><sup>3</sup>Residencias</li><li><sup>4</sup>Local</li></ol>
+      <div class="index__stage">
+        <svg class="index__spark" fill="currentColor"><use href="#sparkle"/></svg>
+        <ol class="index__list"><li><sup>1</sup>Ubicación</li><li><sup>2</sup>El proyecto</li><li><sup>3</sup>Residencias</li><li><sup>4</sup>Local</li></ol>
+      </div>
     </div>
   </section>
 
@@ -328,38 +330,41 @@
         <p class="geo__north"><span>N</span>↑</p>
       </div>
       <p class="geo__credit">Mapa: © colaboradores de <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a></p>
+      <div class="geo__deck">
+        <span class="geo__progress" aria-hidden="true"><i></i></span>
+        <ol class="geo__cards">
+          <li class="geo-card geo-card--intro" data-cat="all">
+            <p class="label"><span>01</span> Ubicación</p>
+            <h2 class="geo-card__title">Rivadavia, San Juan</h2>
+          </li>
+          <li class="geo-card" data-cat="naturaleza">
+            <h3 class="cat__title"><svg aria-hidden="true"><use href="#i-arbol"/></svg>Naturaleza y relax<b>01</b></h3>
+            <p class="geo-card__data">Parque Rivadavia <em>4′</em> · Parque de Mayo <em>9′</em> · Ruta de los Diques: Ullum y Punta Negra</p>
+          </li>
+          <li class="geo-card" data-cat="conectividad">
+            <h3 class="cat__title"><svg aria-hidden="true"><use href="#i-cultura"/></svg>Conectividad y cultura<b>02</b></h3>
+            <p class="geo-card__data">Centro Cívico y Teatro del Bicentenario <em>10′</em> · Av. Circunvalación <em>8′</em></p>
+          </li>
+          <li class="geo-card" data-cat="compras">
+            <h3 class="cat__title"><svg aria-hidden="true"><use href="#i-bolsa"/></svg>Compras y servicios<b>03</b></h3>
+            <p class="geo-card__data">Espacio San Juan · HiperLibertad · supermercados <em>&lt; 5′</em></p>
+          </li>
+          <li class="geo-card" data-cat="salud">
+            <h3 class="cat__title"><svg aria-hidden="true"><use href="#i-salud"/></svg>Salud y bienestar<b>04</b></h3>
+            <p class="geo-card__data">Hospital Marcial Quiroga <em>4′</em> · Hospital Rawson</p>
+          </li>
+          <li class="geo-card" data-cat="movilidad">
+            <h3 class="cat__title"><svg aria-hidden="true"><use href="#i-bus"/></svg>Movilidad inteligente<b>05</b></h3>
+            <p class="geo-card__data">RedTulum · líneas 122 y 125 a <em>&lt; 100 m</em></p>
+          </li>
+          <li class="geo-card" data-cat="gastronomia">
+            <h3 class="cat__title"><svg aria-hidden="true"><use href="#i-gastro"/></svg>Polo gastronómico<b>06</b></h3>
+            <p class="geo-card__data">La Vene · Portho Gelatto · Mercado Ancestral</p>
+          </li>
+        </ol>
+      </div>
     </div>
 
-    <ol class="geo__cards">
-      <li class="geo-card geo-card--intro" data-cat="all">
-        <p class="label"><span>01</span> Ubicación</p>
-        <h2 class="geo-card__title">Rivadavia, San Juan</h2>
-      </li>
-      <li class="geo-card" data-cat="naturaleza">
-        <h3 class="cat__title"><svg aria-hidden="true"><use href="#i-arbol"/></svg>Naturaleza y relax<b>01</b></h3>
-        <p class="geo-card__data">Parque Rivadavia <em>4′</em> · Parque de Mayo <em>9′</em> · Ruta de los Diques: Ullum y Punta Negra</p>
-      </li>
-      <li class="geo-card" data-cat="conectividad">
-        <h3 class="cat__title"><svg aria-hidden="true"><use href="#i-cultura"/></svg>Conectividad y cultura<b>02</b></h3>
-        <p class="geo-card__data">Centro Cívico y Teatro del Bicentenario <em>10′</em> · Av. Circunvalación <em>8′</em></p>
-      </li>
-      <li class="geo-card" data-cat="compras">
-        <h3 class="cat__title"><svg aria-hidden="true"><use href="#i-bolsa"/></svg>Compras y servicios<b>03</b></h3>
-        <p class="geo-card__data">Espacio San Juan · HiperLibertad · supermercados <em>&lt; 5′</em></p>
-      </li>
-      <li class="geo-card" data-cat="salud">
-        <h3 class="cat__title"><svg aria-hidden="true"><use href="#i-salud"/></svg>Salud y bienestar<b>04</b></h3>
-        <p class="geo-card__data">Hospital Marcial Quiroga <em>4′</em> · Hospital Rawson</p>
-      </li>
-      <li class="geo-card" data-cat="movilidad">
-        <h3 class="cat__title"><svg aria-hidden="true"><use href="#i-bus"/></svg>Movilidad inteligente<b>05</b></h3>
-        <p class="geo-card__data">RedTulum · líneas 122 y 125 a <em>&lt; 100 m</em></p>
-      </li>
-      <li class="geo-card" data-cat="gastronomia">
-        <h3 class="cat__title"><svg aria-hidden="true"><use href="#i-gastro"/></svg>Polo gastronómico<b>06</b></h3>
-        <p class="geo-card__data">La Vene · Portho Gelatto · Mercado Ancestral</p>
-      </li>
-    </ol>
   </section>
 
   <!-- ============================================================
@@ -367,8 +372,10 @@
        ============================================================ -->
   <section class="index" data-index="2" data-theme="sage" data-sec="02" aria-hidden="true">
     <div class="index__sticky">
-      <svg class="index__spark" fill="currentColor"><use href="#sparkle"/></svg>
-      <ol class="index__list"><li><sup>1</sup>Ubicación</li><li><sup>2</sup>El proyecto</li><li><sup>3</sup>Residencias</li><li><sup>4</sup>Local</li></ol>
+      <div class="index__stage">
+        <svg class="index__spark" fill="currentColor"><use href="#sparkle"/></svg>
+        <ol class="index__list"><li><sup>1</sup>Ubicación</li><li><sup>2</sup>El proyecto</li><li><sup>3</sup>Residencias</li><li><sup>4</sup>Local</li></ol>
+      </div>
     </div>
   </section>
 
@@ -432,8 +439,10 @@
        ============================================================ -->
   <section class="index" data-index="3" data-theme="sage" data-sec="03" aria-hidden="true">
     <div class="index__sticky">
-      <svg class="index__spark" fill="currentColor"><use href="#sparkle"/></svg>
-      <ol class="index__list"><li><sup>1</sup>Ubicación</li><li><sup>2</sup>El proyecto</li><li><sup>3</sup>Residencias</li><li><sup>4</sup>Local</li></ol>
+      <div class="index__stage">
+        <svg class="index__spark" fill="currentColor"><use href="#sparkle"/></svg>
+        <ol class="index__list"><li><sup>1</sup>Ubicación</li><li><sup>2</sup>El proyecto</li><li><sup>3</sup>Residencias</li><li><sup>4</sup>Local</li></ol>
+      </div>
     </div>
   </section>
 
@@ -533,8 +542,10 @@
        ============================================================ -->
   <section class="index" data-index="4" data-theme="sage" data-sec="04" aria-hidden="true">
     <div class="index__sticky">
-      <svg class="index__spark" fill="currentColor"><use href="#sparkle"/></svg>
-      <ol class="index__list"><li><sup>1</sup>Ubicación</li><li><sup>2</sup>El proyecto</li><li><sup>3</sup>Residencias</li><li><sup>4</sup>Local</li></ol>
+      <div class="index__stage">
+        <svg class="index__spark" fill="currentColor"><use href="#sparkle"/></svg>
+        <ol class="index__list"><li><sup>1</sup>Ubicación</li><li><sup>2</sup>El proyecto</li><li><sup>3</sup>Residencias</li><li><sup>4</sup>Local</li></ol>
+      </div>
     </div>
   </section>
 
