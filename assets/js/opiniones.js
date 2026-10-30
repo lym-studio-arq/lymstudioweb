@@ -49,7 +49,7 @@ window.LYM_OPINIONES = [
     id: 'canaveral',
     proyecto: 'Cañaveral I',
     cliente: 'Ale Toro',
-    autor: 'Eco Vision',
+    autor: 'EcoVisión',
     imagen: 'imagenes/proyecto/canaveral/gallery-01.jpg',
     servicios: ['Brochure', 'Visualizaciones', 'Interiorismo'],
     texto: 'Queríamos que el brochure mostrara lo que nos diferencia: sistema SATE, aberturas de PVC y domótica. LYM lo puso en primer plano, nos propuso ideas para los interiores que no se nos habían ocurrido y tuvo paciencia con todos nuestros cambios.'
@@ -96,7 +96,7 @@ window.LYM_OPINIONES = [
 ].filter(r => r.publicar !== false);
 
 /* Marcas de la cinta "Confiaron en nosotros" */
-window.LYM_CLIENTES = ['FENAM', 'hili.ch', 'Nieto Metaxas', 'Eco Vision', 'El Cazal', 'Honda'];
+window.LYM_CLIENTES = ['FENAM', 'hili.ch', 'Nieto Metaxas', 'EcoVisión', 'El Cazal', 'Honda'];
 
 (function () {
   'use strict';
