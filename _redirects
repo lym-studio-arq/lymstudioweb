@@ -1,0 +1,3 @@
+# Las previews ya están publicadas en su dirección final
+/preview-web/*      /:splat            301
+/preview-trelles/*  /trelles/:splat    301
